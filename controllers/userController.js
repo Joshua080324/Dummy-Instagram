@@ -40,6 +40,36 @@ class UserController {
       next(err); 
     }
   }
+
+    static async googleSignIn(req, res, next) {
+    try {
+      const { google_token } = req.body; 
+
+      const ticket = await client.verifyIdToken({
+          idToken: google_token,
+          audience: process.env.GOOGLE_CLIENT_ID, 
+      });
+      const payload = ticket.getPayload();
+
+      const [user, created] = await User.findOrCreate({
+        where: { email: payload.email },
+        defaults: {
+          username: payload.name,
+          email: payload.email,
+          password: Math.random().toString(36), 
+          profilePic: payload.picture,
+        },
+        hooks: false 
+      });
+
+      
+      const access_token = signToken({ id: user.id });
+      res.status(200).json({ access_token });
+
+    } catch (err) {
+      next(err); 
+    }
+  }
 }
 
 module.exports = UserController;
