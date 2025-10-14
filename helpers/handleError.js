@@ -1,4 +1,4 @@
-function handleError(err, res) {
+function handleError(err, req,res, next) {
   console.error("Error:", err);
 
   if (err.name === "Unauthorized") {
