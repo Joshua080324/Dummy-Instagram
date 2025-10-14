@@ -18,7 +18,18 @@ module.exports = (sequelize, DataTypes) => {
 
   }
   Post.init({
-    content: DataTypes.TEXT,
+    content: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "Content is required"
+        },
+        notNull: {
+          msg: "Content is required"
+        }
+      }
+    },
     isPrivate: DataTypes.BOOLEAN,
     UserId: DataTypes.INTEGER,
     CategoryId: DataTypes.INTEGER
