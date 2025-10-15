@@ -1,6 +1,9 @@
 const { User } = require('../models');
 const bcrypt = require('bcryptjs');
 const { signToken } = require('../helpers/jwt');
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client();
+const axios = require('axios');
 
 class UserController {
     static async register(req, res, next) {
@@ -70,6 +73,8 @@ class UserController {
             next(err);
         }
     }
+
+    
 }
 
 module.exports = UserController;

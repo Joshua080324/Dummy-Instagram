@@ -9,11 +9,10 @@ module.exports = async function authMiddleware(req, res, next) {
     const decoded = verifyToken(token);
     const user = await User.findByPk(decoded.id);
     if (!user) throw { name: "Unauthorized" };
-
     req.user = user;
     next();
   } catch (err) {
     console.error(err);
-    res.status(401).json({ message: "Unauthorized access" });
+    next(err);
   }
 };
