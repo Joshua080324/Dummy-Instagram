@@ -32,22 +32,22 @@ app.use(handleError);
 
 // +++ Logika koneksi Socket.IO +++
 io.on('connection', (socket) => {
-  console.log('✅ User connected:', socket.id);
+  // console.log('✅ User connected:', socket.id); //comment untuk npx jest
 
   socket.on('join_chat', (chatId) => {
     socket.join(`chat_${chatId}`);
   });
 
-  socket.on('send_message', (messageData) => {
-    io.to(`chat_${messageData.chatId}`).emit('new_message', messageData); //comment untuk npx jest
+  socket.on('send_message', (messageData) => { //comment untuk npx jest
+    io.to(`chat_${messageData.chatId}`).emit('new_message', messageData); 
   });
 
-  socket.on('user_typing', (typingData) => {
-    io.to(`chat_${typingData.chatId}`).emit('typing_status', typingData); //comment untuk npx jest
+  socket.on('user_typing', (typingData) => { //comment untuk npx jest
+    io.to(`chat_${typingData.chatId}`).emit('typing_status', typingData); 
   });
 
-  socket.on('disconnect', () => {
-    console.log('❌ User disconnected:', socket.id); //comment untuk npx jest
+  socket.on('disconnect', () => { //comment untuk npx jest
+    console.log('❌ User disconnected:', socket.id); 
   });
 });
 
