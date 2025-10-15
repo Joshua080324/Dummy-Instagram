@@ -39,21 +39,19 @@ io.on('connection', (socket) => {
   });
 
   socket.on('send_message', (messageData) => {
-    io.to(`chat_${messageData.chatId}`).emit('new_message', messageData);
+    io.to(`chat_${messageData.chatId}`).emit('new_message', messageData); //comment untuk npx jest
   });
 
   socket.on('user_typing', (typingData) => {
-    io.to(`chat_${typingData.chatId}`).emit('typing_status', typingData);
+    io.to(`chat_${typingData.chatId}`).emit('typing_status', typingData); //comment untuk npx jest
   });
 
   socket.on('disconnect', () => {
-    console.log('❌ User disconnected:', socket.id);
+    console.log('❌ User disconnected:', socket.id); //comment untuk npx jest
   });
 });
 
-
-
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== 'test') { //comment untuk npx jest
   server.listen(port, () => {
     console.log(`App listening on port http://localhost:${port}`);
   });

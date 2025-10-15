@@ -71,5 +71,12 @@ describe('AI Helper', () => {
   const clean = cleanText(dirty);
   expect(clean).toBe('One Two Bold Italic');
 });
+test('should handle undefined input gracefully', () => {
+  const { cleanText } = require('../../helpers/aiHelper');
+  const clean = cleanText(); 
+  expect(clean).toBe(''); 
+});
+
+
 
 });

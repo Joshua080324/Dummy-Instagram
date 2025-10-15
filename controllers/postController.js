@@ -15,7 +15,7 @@ class PostController {
       const post = await Post.create({
         content,
         isPrivate,
-        CategoryId: categoryId || null,
+        CategoryId: categoryId,
         UserId: req.user.id,
       });
 
