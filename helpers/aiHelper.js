@@ -3,11 +3,11 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
 
-//cleaning text function
+// cleaning text function
 function cleanText(text = "") {
   return text
-    // Hapus heading markdown dan pemisah
-    .replace(/^#+\s*/gm, "")       
+    // Hapus seluruh baris heading markdown dan pemisah
+    .replace(/^#+\s?.*$/gm, "")     
     .replace(/---+/g, " ")         
     // Hapus bullet dan angka daftar
     .replace(/^\s*\d+\.\s*/gm, "") 
@@ -21,7 +21,6 @@ function cleanText(text = "") {
     .trim();
 }
 
-
 async function askGemini(prompt) {
   try {
     const result = await model.generateContent(prompt);
@@ -33,4 +32,4 @@ async function askGemini(prompt) {
   }
 }
 
-module.exports = { askGemini };
+module.exports = { askGemini, cleanText };

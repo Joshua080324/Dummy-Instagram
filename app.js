@@ -21,10 +21,11 @@ app.set('socketio', io);
 app.use(cors()); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public')); // Serve static files
+app.use(express.static('public'));
 
 // Router
-app.use(routes);
+app.use("/", routes);
+
 
 // Error handler
 app.use(handleError);
@@ -35,15 +36,27 @@ io.on('connection', (socket) => {
 
   socket.on('join_chat', (chatId) => {
     socket.join(`chat_${chatId}`);
-    // console.log(`User ${socket.id} joined room: chat_${chatId}`);
+  });
+
+  socket.on('send_message', (messageData) => {
+    io.to(`chat_${messageData.chatId}`).emit('new_message', messageData);
+  });
+
+  socket.on('user_typing', (typingData) => {
+    io.to(`chat_${typingData.chatId}`).emit('typing_status', typingData);
   });
 
   socket.on('disconnect', () => {
-    // console.log('❌ User disconnected:', socket.id);
+    console.log('❌ User disconnected:', socket.id);
   });
 });
 
 
-server.listen(port, () => {
-  console.log(`App listening on port http://localhost:${port}`);
-});
+
+if (process.env.NODE_ENV !== 'test') {
+  server.listen(port, () => {
+    console.log(`App listening on port http://localhost:${port}`);
+  });
+}
+
+module.exports = app;

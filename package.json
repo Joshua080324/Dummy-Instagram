@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-    "scripts": {
+  "scripts": {
     "test": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles --forceExit --reporters=default --reporters=./config/simpleJestReporter.js",
     "test:coverage": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles --forceExit --coverage",
     "test:watch": "cross-env NODE_ENV=test jest --watch",
@@ -29,6 +29,7 @@
     "express": "^5.1.0",
     "google-auth-library": "^10.4.0",
     "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.1",
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
     "passport": "^0.7.0",
@@ -39,11 +40,14 @@
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
     "@types/jest": "^30.0.0",
+    "cross-env": "^7.0.3",
     "jest": "^30.2.0",
     "nodemon": "^3.1.10",
     "sequelize-cli": "^6.6.3",
-    "supertest": "^7.1.4",
-    "cross-env": "^7.0.3"
+    "sqlite3": "^5.1.7",
+    "supertest": "^7.1.4"
   }
 }

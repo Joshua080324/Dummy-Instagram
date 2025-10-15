@@ -2,18 +2,20 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { Post, Like, Category, User } = require("../models");
 const { Op } = require("sequelize");
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
-
 async function getAIRecommendations(userId) {
   try {
+    // ✅ Inisialisasi Gemini di dalam fungsi agar bisa dimock
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
+
     const likedPosts = await Like.findAll({
       where: { UserId: userId },
       include: [{ model: Post, include: [Category] }],
     });
 
-    if (likedPosts.length < 3) {  //minimal 3 likes
-      return Post.findAll({
+    // ✅ Kalau user belum banyak like → return default post
+    if (!likedPosts || likedPosts.length < 3) {
+      return await Post.findAll({
         where: { isPrivate: false },
         include: [Category, User, Like],
         order: [["createdAt", "DESC"]],
@@ -22,16 +24,18 @@ async function getAIRecommendations(userId) {
     }
 
     const userInterests = likedPosts
-      .map((l) => `- "${l.Post.content}" (Kategori: ${l.Post.Category?.name || "Umum"})`)
+      .map(
+        (like) =>
+          `- "${like.Post.content}" (Kategori: ${like.Post.Category?.name || "Umum"})`
+      )
       .join("\n");
 
     const prompt = `
-      Anda adalah sistem rekomendasi konten yang cerdas untuk aplikasi media sosial.
-      Seorang pengguna menyukai postingan-postingan berikut:
+      Anda adalah sistem rekomendasi konten untuk aplikasi media sosial.
+      Pengguna menyukai postingan berikut:
       ${userInterests}
 
-      Berdasarkan daftar di atas, berikan 3 tampilan kategori yang paling relevan dengan minat pengguna.
-      Balas HANYA dengan nama kategori, dipisahkan oleh koma (contoh: Teknologi, Makanan, Olahraga).
+      Berdasarkan daftar ini, berikan 3 kategori paling relevan, dipisahkan koma.
     `;
 
     const result = await model.generateContent(prompt);
@@ -41,7 +45,7 @@ async function getAIRecommendations(userId) {
     const recommendedPosts = await Post.findAll({
       where: {
         isPrivate: false,
-        UserId: { [Op.ne]: userId }, // Jangan tampilkan post milik sendiri
+        UserId: { [Op.ne]: userId },
       },
       include: [
         { model: Category, where: { name: { [Op.in]: categories } } },
@@ -55,8 +59,7 @@ async function getAIRecommendations(userId) {
     return recommendedPosts;
   } catch (err) {
     console.error("Error getting AI recommendations:", err);
-    // Jika AI gagal, berikan rekomendasi default (post publik terbaru)
-    return Post.findAll({
+    return await Post.findAll({
       where: { isPrivate: false },
       include: [Category, User, Like],
       order: [["createdAt", "DESC"]],

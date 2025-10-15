@@ -65,7 +65,6 @@ class UserController {
                 hooks: false
             });
 
-
             const access_token = signToken({ id: user.id });
             res.status(200).json({ access_token });
 
@@ -73,8 +72,6 @@ class UserController {
             next(err);
         }
     }
-
-    
 }
 
 module.exports = UserController;
