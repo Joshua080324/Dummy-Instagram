@@ -21,6 +21,7 @@ app.set('socketio', io);
 app.use(cors()); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public')); // Serve static files
 
 // Router
 app.use(routes);
@@ -34,11 +35,11 @@ io.on('connection', (socket) => {
 
   socket.on('join_chat', (chatId) => {
     socket.join(`chat_${chatId}`);
-    console.log(`User ${socket.id} joined room: chat_${chatId}`);
+    // console.log(`User ${socket.id} joined room: chat_${chatId}`);
   });
 
   socket.on('disconnect', () => {
-    console.log('❌ User disconnected:', socket.id);
+    // console.log('❌ User disconnected:', socket.id);
   });
 });
 
