@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "scripts": {
+    "test": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles --forceExit --reporters=default --reporters=./config/simpleJestReporter.js",
+    "test:coverage": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles --forceExit --coverage",
+    "test:watch": "cross-env NODE_ENV=test jest --watch",
+    "test:setup": "cross-env NODE_ENV=test npx sequelize-cli db:create && cross-env NODE_ENV=test npx sequelize-cli db:migrate"
   },
   "repository": {
     "type": "git",
@@ -36,7 +39,11 @@
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.2.0",
     "nodemon": "^3.1.10",
-    "sequelize-cli": "^6.6.3"
+    "sequelize-cli": "^6.6.3",
+    "supertest": "^7.1.4",
+    "cross-env": "^7.0.3"
   }
 }

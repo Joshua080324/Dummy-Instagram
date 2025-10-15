@@ -28,17 +28,17 @@ app.use(routes);
 // Error handler
 app.use(handleError);
 
-//  Koneksi Socket.IO
+// +++ Logika koneksi Socket.IO +++
 io.on('connection', (socket) => {
-  // console.log(' User connected:', socket.id);
+  console.log('✅ User connected:', socket.id);
 
   socket.on('join_chat', (chatId) => {
     socket.join(`chat_${chatId}`);
-    // console.log(`User ${socket.id} joined room: chat_${chatId}`);
+    console.log(`User ${socket.id} joined room: chat_${chatId}`);
   });
 
   socket.on('disconnect', () => {
-    // console.log(' User disconnected:', socket.id);
+    console.log('❌ User disconnected:', socket.id);
   });
 });
 
