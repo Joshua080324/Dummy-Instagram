@@ -1,62 +1,56 @@
 [
   {
-    "content": "Beautiful sunset at the beach! 🌅",
+    "content": "Beautiful sunset!",
     "UserId": 1,
     "CategoryId": 1,
     "isPrivate": false,
     "images": [
       {
-        "imageUrl": "https://images.unsplash.com/photo-1501973801540-537f08ccae7b?w=1200&auto=format&fit=crop"
-      },
-      {
-        "imageUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&auto=format&fit=crop"
+        "imageUrl": "https://picsum.photos/seed/beach1/1200/800"
       }
     ]
   },
   {
-    "content": "Delicious homemade pasta! 🍝",
+    "content": "Delicious pasta!",
     "UserId": 2,
     "CategoryId": 2,
     "isPrivate": false,
     "images": [
       {
-        "imageUrl": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&auto=format&fit=crop"
+        "imageUrl": "https://picsum.photos/seed/food1/1200/800"
       }
     ]
   },
   {
-    "content": "Exploring the streets of Tokyo 🗼",
-    "UserId": 2,
+    "content": "Tokyo streets!",
+    "UserId": 3,
     "CategoryId": 3,
     "isPrivate": false,
     "images": [
       {
-        "imageUrl": "https://images.unsplash.com/photo-1549880338-65ddcdfd017b?w=1200&auto=format&fit=crop"
-      },
-      {
-        "imageUrl": "https://images.unsplash.com/photo-1526481280698-3bfa7568d2dd?w=1200&auto=format&fit=crop"
+        "imageUrl": "https://picsum.photos/seed/travel1/1200/800"
       }
     ]
   },
   {
-    "content": "New collection dropping soon! 👗",
+    "content": "Fashion collection!",
     "UserId": 4,
     "CategoryId": 4,
     "isPrivate": false,
     "images": [
       {
-        "imageUrl": "https://images.unsplash.com/photo-1495121605193-b116b5b09a7f?w=1200&auto=format&fit=crop"
+        "imageUrl": "https://picsum.photos/seed/fashion1/1200/800"
       }
     ]
   },
   {
-    "content": "Latest tech gadgets review 📱",
-    "UserId": 3,
+    "content": "Tech review!",
+    "UserId": 5,
     "CategoryId": 5,
     "isPrivate": false,
     "images": [
       {
-        "imageUrl": "https://images.unsplash.com/photo-1518779578993-ec3579fee39f?w=1200&auto=format&fit=crop"
+        "imageUrl": "https://picsum.photos/seed/tech1/1200/800"
       }
     ]
   }

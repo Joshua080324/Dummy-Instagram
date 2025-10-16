@@ -7,7 +7,7 @@
   {
     "username": "jane_smith",
     "email": "jane@example.com",
-    "password": "password123t"
+    "password": "password123"
   },
   {
     "username": "mike_wilson",
@@ -22,6 +22,56 @@
   {
     "username": "alex_brown",
     "email": "alex@example.com",
+    "password": "password123"
+  },
+  {
+    "username": "emma_watson",
+    "email": "emma@example.com",
+    "password": "password123"
+  },
+  {
+    "username": "david_chen",
+    "email": "david@example.com",
+    "password": "password123"
+  },
+  {
+    "username": "lisa_anderson",
+    "email": "lisa@example.com",
+    "password": "password123"
+  },
+  {
+    "username": "ryan_taylor",
+    "email": "ryan@example.com",
+    "password": "password123"
+  },
+  {
+    "username": "sophia_lee",
+    "email": "sophia@example.com",
+    "password": "password123"
+  },
+  {
+    "username": "james_martinez",
+    "email": "james@example.com",
+    "password": "password123"
+  },
+  {
+    "username": "olivia_garcia",
+    "email": "olivia@example.com",
+    "password": "password123"
+  },
+  {
+    "username": "daniel_rodriguez",
+    "email": "daniel@example.com",
+    "password": "password123"
+  },
+  {
+    "username": "ava_johnson",
+    "email": "ava@example.com",
+    "password": "password123"
+  },
+  {
+    "username": "noah_kim",
+    "email": "noah@example.com",
     "password": "password123"
   }
 ]

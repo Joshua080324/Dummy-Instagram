@@ -41,15 +41,27 @@ module.exports = {
       const postsWithoutImages = posts.map(({ images, ...post }) => post);
       await queryInterface.bulkInsert('Posts', addTimestamps(postsWithoutImages));
 
-      // Seed images
+      // Get actual post IDs from database
+      const [insertedPosts] = await queryInterface.sequelize.query(
+        'SELECT id FROM "Posts" ORDER BY id ASC'
+      );
+
+      // Seed images with correct PostId
       const images = posts.reduce((acc, post, index) => {
-        const postImages = post.images.map(image => ({
-          ...image,
-          PostId: index + 1
-        }));
-        return [...acc, ...postImages];
+        const actualPostId = insertedPosts[index]?.id;
+        if (actualPostId && post.images) {
+          const postImages = post.images.map(image => ({
+            ...image,
+            PostId: actualPostId
+          }));
+          return [...acc, ...postImages];
+        }
+        return acc;
       }, []);
-      await queryInterface.bulkInsert('Images', addTimestamps(images));
+      
+      if (images.length > 0) {
+        await queryInterface.bulkInsert('Images', addTimestamps(images));
+      }
 
       // Seed likes
       await queryInterface.bulkInsert('Likes', addTimestamps(likes));
