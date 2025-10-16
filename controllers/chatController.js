@@ -43,14 +43,15 @@ class ChatController {
                     [Op.or]: [{ UserId: userId }, { partnerId: userId }],
                 },
                 include: [
-                    { model: User, as: "creator", attributes: ["id", "username", "profilePic"] },
-                    { model: User, as: "partner", attributes: ["id", "username", "profilePic"] },
+                    { model: User, as: "creator", attributes: ["id", "username", "email"], required: false },
+                    { model: User, as: "partner", attributes: ["id", "username", "email"], required: false },
                 ],
                 order: [["updatedAt", "DESC"]],
             });
 
             res.json(chats);
         } catch (err) {
+            console.error('Error in getUserChats:', err);
             next(err);
         }
     }

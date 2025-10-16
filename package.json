@@ -4,10 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test node -r dotenv/config node_modules/.bin/jest --runInBand --detectOpenHandles --forceExit --reporters=default --reporters=./config/simpleJestReporter.js dotenv_config_path=.env.test",
-    "test:coverage": "cross-env NODE_ENV=test node -r dotenv/config node_modules/.bin/jest --runInBand --detectOpenHandles --forceExit --coverage dotenv_config_path=.env.test",
-    "test:watch": "cross-env NODE_ENV=test node -r dotenv/config node_modules/.bin/jest --watch dotenv_config_path=.env.test",
-    "test:setup": "cross-env NODE_ENV=test node -r dotenv/config npx sequelize-cli db:create && cross-env NODE_ENV=test node -r dotenv/config npx sequelize-cli db:migrate dotenv_config_path=.env.test"
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "migrate": "sequelize-cli db:migrate",
+    "migrate:undo": "sequelize-cli db:migrate:undo",
+    "seed": "sequelize-cli db:seed:all",
+    "seed:undo": "sequelize-cli db:seed:undo:all",
+    "test": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles --forceExit",
+    "test:coverage": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles --forceExit --coverage",
+    "test:watch": "cross-env NODE_ENV=test jest --watch",
+    "test:setup": "cross-env NODE_ENV=test sequelize-cli db:create && cross-env NODE_ENV=test sequelize-cli db:migrate"
   },
   "repository": {
     "type": "git",
@@ -22,7 +28,9 @@
   "homepage": "https://github.com/Joshua080324/Dummy-Instagram#readme",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "axios": "^1.12.2",
     "bcryptjs": "^3.0.2",
+    "bootstrap": "^5.3.8",
     "cloudinary": "^1.41.3",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -37,6 +45,8 @@
     "passport-google-oauth20": "^2.0.0",
     "pg": "^8.16.3",
     "pg-hstore": "^2.3.4",
+    "react-bootstrap": "^2.10.10",
+    "react-router-dom": "^7.9.4",
     "sequelize": "^6.37.7",
     "socket.io": "^4.8.1",
     "sweetalert2": "^11.26.2"

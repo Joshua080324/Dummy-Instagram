@@ -60,7 +60,6 @@ class UserController {
                     username: payload.name,
                     email: payload.email,
                     password: Math.random().toString(36),
-                    profilePic: payload.picture,
                 },
                 hooks: false
             });
