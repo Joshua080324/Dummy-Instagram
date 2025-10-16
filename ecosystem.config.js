@@ -9,7 +9,7 @@ module.exports = {
             // restart_delay: 3000,         // Opsi: Beri jeda 3 detik sebelum restart otomatis setelah crash
             // log_file: "logs/combined.log", // Opsi: gabungkan stdout dan stderr ke satu file log
             // error_file: "logs/error.log",  // Opsi: log error saja ke file terpisah
-            // out_file: "logs/out.log",      // Opsi: log output saja ke file terpisah
+            // out_file: "logs/out.log",      // Opsi: log output saja ke file terpisa
             
             env: {
                 NODE_ENV: "production",
