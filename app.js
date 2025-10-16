@@ -47,7 +47,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => { //comment untuk npx jest
-    console.log('❌ User disconnected:', socket.id); 
+    // console.log('❌ User disconnected:', socket.id); 
   });
 });
 
