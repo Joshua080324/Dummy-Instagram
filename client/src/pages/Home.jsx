@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Button, Navbar, Spinner } from 'react-bootstrap';
-import { PlusCircleFill, ChatDotsFill, ChatLeftTextFill } from 'react-bootstrap-icons';
+import { PlusCircleFill, ChatDotsFill, ChatLeftTextFill, PersonCircle } from 'react-bootstrap-icons';
 import Swal from 'sweetalert2';
 import http from '../helpers/http';
 import PostCard from '../components/PostCard';
@@ -87,6 +87,20 @@ const Home = () => {
             </div>
           </Navbar.Brand>
           <div className="d-flex gap-2">
+            <Button 
+              variant="primary"
+              onClick={() => navigate('/profile')}
+              className="d-flex align-items-center fw-semibold"
+              style={{
+                background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                border: 'none',
+                borderRadius: '12px',
+                padding: '8px 16px'
+              }}
+            >
+              <PersonCircle className="me-2" />
+              Profile
+            </Button>
             <Button 
               variant="primary"
               onClick={() => navigate('/messages')}
