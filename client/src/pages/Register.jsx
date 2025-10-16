@@ -51,12 +51,15 @@ const Register = () => {
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
+    console.log('Google Registration Success:', credentialResponse);
     setLoading(true);
     try {
+      console.log('Sending Google token to backend...');
       const { data } = await http.post('/users/auth/google', {
         google_token: credentialResponse.credential,
       });
       
+      console.log('Backend response:', data);
       localStorage.setItem('access_token', data.access_token);
       
       Swal.fire({
@@ -65,27 +68,36 @@ const Register = () => {
         text: 'Welcome!',
         timer: 1500,
         showConfirmButton: false,
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdrop: 'rgba(102, 126, 234, 0.4)',
       });
 
       setTimeout(() => {
         navigate('/');
       }, 1500);
     } catch (error) {
+      console.error('Google Registration Error:', error);
+      console.error('Error response:', error.response?.data);
       Swal.fire({
         icon: 'error',
         title: 'Google Registration Failed',
-        text: error.response?.data?.message || 'Something went wrong',
+        text: error.response?.data?.message || 'Something went wrong. Please try again.',
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdrop: 'rgba(102, 126, 234, 0.4)',
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleError = () => {
+  const handleGoogleError = (error) => {
+    console.error('Google OAuth Error:', error);
     Swal.fire({
       icon: 'error',
       title: 'Google Sign Up Failed',
-      text: 'Please try again',
+      text: 'Could not connect to Google. Please try again.',
+      background: 'rgba(255, 255, 255, 0.95)',
+      backdrop: 'rgba(102, 126, 234, 0.4)',
     });
   };
 
