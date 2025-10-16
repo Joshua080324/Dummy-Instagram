@@ -141,12 +141,10 @@ const Login = () => {
                 <Form onSubmit={handleSubmit}>
                   <Form.Group className="mb-3">
                     <Form.Control
-                      type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="Email"
-                      
                       className="instagram-input"
                       disabled={loading}
                     />

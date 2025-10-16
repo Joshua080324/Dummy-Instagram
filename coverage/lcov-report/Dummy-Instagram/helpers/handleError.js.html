@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/15</span>
+                <span class='fraction'>15/15</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/14</span>
+                <span class='fraction'>14/14</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/14</span>
+                <span class='fraction'>14/14</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -94,65 +94,65 @@
 <a name='L29'></a><a href='#L29'>29</a>
 <a name='L30'></a><a href='#L30'>30</a>
 <a name='L31'></a><a href='#L31'>31</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">function <span class="fstat-no" title="function not covered" >handleError(</span>err, req,res, next) {
-<span class="cstat-no" title="statement not covered" >  console.error("Error:", err);</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">function handleError(err, req,res, next) {
+  console.error("Error:", err);
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  if (err.name === "Unauthorized") {</span>
-<span class="cstat-no" title="statement not covered" >    return res.status(401).json({ message: "Unauthorized access" });</span>
+  if (err.name === "Unauthorized") {
+    return res.status(401).json({ message: "Unauthorized access" });
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  if (err.name === "InvalidLogin") {</span>
-<span class="cstat-no" title="statement not covered" >    return res.status(401).json({ message: "Invalid email or password" });</span>
+  if (err.name === "InvalidLogin") {
+    return res.status(401).json({ message: "Invalid email or password" });
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  if (err.name === "NotFound") {</span>
-<span class="cstat-no" title="statement not covered" >    return res.status(404).json({ message: "Data not found" });</span>
+  if (err.name === "NotFound") {
+    return res.status(404).json({ message: "Data not found" });
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  if (err.name === "BadRequest") {</span>
-<span class="cstat-no" title="statement not covered" >    return res.status(400).json({ message: err.message || "Bad request" });</span>
+  if (err.name === "BadRequest") {
+    return res.status(400).json({ message: err.message || "Bad request" });
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  if (err.name === "SequelizeValidationError" || err.name === "SequelizeUniqueConstraintError") {</span>
-    const messages = <span class="cstat-no" title="statement not covered" >err.errors.map(<span class="fstat-no" title="function not covered" >e </span>=&gt; <span class="cstat-no" title="statement not covered" >e.message)</span>;</span>
-<span class="cstat-no" title="statement not covered" >    return res.status(400).json({ message: messages });</span>
+  if (err.name === "SequelizeValidationError" || err.name === "SequelizeUniqueConstraintError") {
+    const messages = err.errors.map(e =&gt; e.message);
+    return res.status(400).json({ message: messages });
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return res.status(500).json({</span>
+  return res.status(500).json({
     message: "Internal Server Error",
   });
 }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >module.exports = handleError;</span>
+module.exports = handleError;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -160,7 +160,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-16T13:55:15.077Z
+                at 2025-10-16T19:25:59.876Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
