@@ -1,33 +1,43 @@
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleLike, setLikeCount, setLikeState } from '../store/likesSlice';
 import { Card, Carousel, Button } from 'react-bootstrap';
 import { Heart, HeartFill, ChatDots, Send, Bookmark } from 'react-bootstrap-icons';
 import http from '../helpers/http';
 import Swal from 'sweetalert2';
 
 const PostCard = ({ post, onLikeToggle }) => {
-  const [isLiked, setIsLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(post.Likes?.length || 0);
+  const dispatch = useDispatch();
+  const isLiked = useSelector(state => state.likes.likedById[post.id]) || false;
+  const likesCount = useSelector(state => state.likes.counts[post.id]) ?? (post.Likes?.length || 0);
   const [showFullCaption, setShowFullCaption] = useState(false);
 
-  // Check if current user has liked this post
+  // Initialize redux like state on mount
   useState(() => {
-    const token = localStorage.getItem('access_token');
-    if (token && post.Likes) {
-      // You might want to decode token to get user id and check if they liked
-      // For now, we'll use a simple approach
-      const liked = post.Likes.some(like => like.UserId === post.UserId);
-      setIsLiked(liked);
+    if (post && post.id) {
+      dispatch(setLikeCount({ postId: post.id, count: post.Likes?.length || 0 }));
+      // naive liked detection: current user liked if Likes contains current user id
+      const token = localStorage.getItem('access_token');
+      if (token && post.Likes) {
+        // decode token minimal (not verifying) to get id
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          const userId = payload.id;
+          const liked = post.Likes.some(like => like.UserId === userId);
+          dispatch(setLikeState({ postId: post.id, liked }));
+        } catch (e) {
+          // ignore
+        }
+      }
     }
-  }, [post.Likes]);
+  }, [post]);
 
   const handleLike = async () => {
     try {
       const { data } = await http.post(`/posts/${post.id}/like`);
-      
-      // Toggle like state
-      setIsLiked(!isLiked);
-      setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
-      
+
+      // Optimistically toggle redux state
+      dispatch(toggleLike(post.id));
       if (onLikeToggle) onLikeToggle(post.id);
     } catch (error) {
       Swal.fire({
