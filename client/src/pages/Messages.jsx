@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import http from '../helpers/http';
 import Swal from 'sweetalert2';
 import StartChatModal from '../components/StartChatModal';
+import DiscoverUsersModal from '../components/DiscoverUsersModal';
 
 const Messages = () => {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ const Messages = () => {
   const [sending, setSending] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showStartChatModal, setShowStartChatModal] = useState(false);
+  const [showDiscoverModal, setShowDiscoverModal] = useState(false);
   const messagesEndRef = useRef(null);
   
   // Safe way to get current user ID
@@ -205,30 +207,7 @@ const Messages = () => {
           </div>
           <div className="d-flex gap-2">
             <Button
-              onClick={async () => {
-                console.log('Testing API...');
-                try {
-                  const response = await http.get('/chats');
-                  console.log('API Response:', response.data);
-                  alert('API works! Check console for data. Total chats: ' + response.data.length);
-                } catch (error) {
-                  console.error('API Error:', error);
-                  alert('API Error: ' + (error.response?.data?.message || error.message));
-                }
-              }}
-              className="d-flex align-items-center fw-semibold"
-              style={{
-                background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                border: 'none',
-                borderRadius: '12px',
-                padding: '10px 20px',
-                boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)'
-              }}
-            >
-              Test API
-            </Button>
-            <Button
-              onClick={() => setShowStartChatModal(true)}
+              onClick={() => setShowDiscoverModal(true)}
               className="d-flex align-items-center fw-semibold"
               style={{
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -239,7 +218,7 @@ const Messages = () => {
               }}
             >
               <PlusCircleFill className="me-2" size={20} />
-              New Chat
+              Discover Users
             </Button>
           </div>
         </div>
@@ -557,10 +536,19 @@ const Messages = () => {
       {/* Start Chat Modal */}
       <StartChatModal 
         show={showStartChatModal} 
-        onHide={() => {
+        handleClose={() => {
           setShowStartChatModal(false);
           fetchChats(); // Refresh chats after closing modal
         }} 
+      />
+
+      <DiscoverUsersModal
+        show={showDiscoverModal}
+        onHide={() => setShowDiscoverModal(false)}
+        onChatCreated={() => {
+          setShowDiscoverModal(false);
+          fetchChats(); // Refresh chat list when new chat is created
+        }}
       />
     </div>
   );
