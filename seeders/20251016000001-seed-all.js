@@ -1,6 +1,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const bcrypt = require('bcryptjs');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -27,8 +28,14 @@ module.exports = {
       // Seed categories first
       await queryInterface.bulkInsert('Categories', addTimestamps(categories));
 
-      // Seed users
-      await queryInterface.bulkInsert('Users', addTimestamps(users));
+      // Seed users with hashed passwords
+      const usersWithHashedPasswords = await Promise.all(
+        users.map(async (user) => ({
+          ...user,
+          password: await bcrypt.hash(user.password, 10)
+        }))
+      );
+      await queryInterface.bulkInsert('Users', addTimestamps(usersWithHashedPasswords));
 
       // Seed posts and their images
       const postsWithoutImages = posts.map(({ images, ...post }) => post);
