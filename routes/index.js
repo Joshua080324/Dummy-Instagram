@@ -6,12 +6,12 @@ const postRouter = require('./postRouter');
 const chatRouter = require('./chatRouter');
 const aiRouter = require('./aiRouter');
 
-router.get('/', (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    message: 'Welcome to the Dummy Instagram API!'
-  });
-});
+// router.get('/', (req, res) => {
+//   res.status(200).json({
+//     status: 'success',
+//     message: 'Welcome to the Dummy Instagram API!'
+//   });
+// });
 
 router.use('/users', userRouter);
 router.use('/posts', postRouter);

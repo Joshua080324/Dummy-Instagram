@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-const port = 80 || process.env.PORT ;
+const port = process.env.PORT || 3000;
 const handleError = require('./helpers/handleError');
 const routes = require('./routes');
 const cors = require('cors'); 
