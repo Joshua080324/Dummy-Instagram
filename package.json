@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles --forceExit --reporters=default --reporters=./config/simpleJestReporter.js",
-    "test:coverage": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles --forceExit --coverage",
-    "test:watch": "cross-env NODE_ENV=test jest --watch",
-    "test:setup": "cross-env NODE_ENV=test npx sequelize-cli db:create && cross-env NODE_ENV=test npx sequelize-cli db:migrate"
+    "test": "cross-env NODE_ENV=test node -r dotenv/config node_modules/.bin/jest --runInBand --detectOpenHandles --forceExit --reporters=default --reporters=./config/simpleJestReporter.js dotenv_config_path=.env.test",
+    "test:coverage": "cross-env NODE_ENV=test node -r dotenv/config node_modules/.bin/jest --runInBand --detectOpenHandles --forceExit --coverage dotenv_config_path=.env.test",
+    "test:watch": "cross-env NODE_ENV=test node -r dotenv/config node_modules/.bin/jest --watch dotenv_config_path=.env.test",
+    "test:setup": "cross-env NODE_ENV=test node -r dotenv/config npx sequelize-cli db:create && cross-env NODE_ENV=test node -r dotenv/config npx sequelize-cli db:migrate dotenv_config_path=.env.test"
   },
   "repository": {
     "type": "git",
@@ -27,6 +27,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "express-session": "^1.18.2",
     "google-auth-library": "^10.4.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
