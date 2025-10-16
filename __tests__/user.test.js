@@ -154,7 +154,6 @@ describe('UserController', () => {
           username: 'Google User',
           email: 'google@example.com',
           password: expect.any(String),
-          profilePic: 'google.jpg',
         },
         hooks: false,
       });

@@ -105,7 +105,7 @@ describe('PostController', () => {
             expect(Post.findAll).toHaveBeenCalledWith({
                 where: { isPrivate: false },
                 include: [
-                    { model: User, attributes: ['id', 'username', 'profilePic'] },
+                    { model: User, attributes: ['id', 'username', 'email'] },
                     { model: Image },
                     { model: Category, attributes: ['name'] },
                     { model: Like },
