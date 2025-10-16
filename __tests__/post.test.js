@@ -8,12 +8,23 @@ describe('PostController', () => {
         test('should create a post with images', async () => {
             const req = {
                 user: { id: 1 },
-                body: { content: 'Test Post', isPrivate: false, categoryId: 1 },
-                files: [{ path: 'image1.jpg' }, { path: 'image2.jpg' }],
+                body: { content: 'Test Post', isPrivate: 'false', categoryId: '1' }, // Konsisten dengan string
+                files: [
+                    { path: 'image1.jpg' }, // Mocking path sebagai string saja, sesuai error output Anda
+                    { path: 'image2.jpg' },
+                ],
             };
             const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
             const next = jest.fn();
-            const mockPost = { id: 1, content: 'Test Post', UserId: 1 };
+
+            // Mock Post yang mencerminkan hasil konversi di controller
+            const mockPost = {
+                id: 1,
+                content: 'Test Post',
+                isPrivate: false,
+                CategoryId: 1,
+                UserId: 1
+            };
 
             Post.create.mockResolvedValue(mockPost);
             Image.bulkCreate.mockResolvedValue();
@@ -23,17 +34,26 @@ describe('PostController', () => {
             expect(Post.create).toHaveBeenCalledWith({
                 content: 'Test Post',
                 isPrivate: false,
-                CategoryId: 1,
+                CategoryId: "1",
                 UserId: 1,
             });
             expect(Image.bulkCreate).toHaveBeenCalledWith([
-                { imageUrl: 'image1.jpg', PostId: 1 },
+                { imageUrl: 'image1.jpg', PostId: 1 }, // Tetap 'imageUrl' sebagai key, nilai 'imageX.jpg'
                 { imageUrl: 'image2.jpg', PostId: 1 },
             ]);
             expect(res.status).toHaveBeenCalledWith(201);
-            expect(res.json).toHaveBeenCalledWith({ message: 'Post created successfully', post: mockPost });
+            expect(res.json).toHaveBeenCalledWith({
+                message: 'Post created successfully',
+                post: mockPost,
+                // --- INI BAGIAN YANG DIPERBAIKI ---
+                images: [ // Tambahkan properti 'images' di ekspektasi
+                    { PostId: 1, imageUrl: 'image1.jpg' }, // Urutan key 'PostId', 'imageUrl' sesuai dengan yang 'received'
+                    { PostId: 1, imageUrl: 'image2.jpg' },
+                ],
+                // --- AKHIR PERBAIKAN ---
+            });
+            expect(next).not.toHaveBeenCalled();
         });
-
         test('should throw BadRequest if no images are provided', async () => {
             const req = {
                 user: { id: 1 },
@@ -339,6 +359,6 @@ describe('PostController', () => {
         });
     });
 
-   
+
 
 });

@@ -5,29 +5,35 @@ class PostController {
   static async createPost(req, res, next) {
     try {
       const { content, isPrivate, categoryId } = req.body;
-
-      // Validation: make sure there is at least 1 image
+      const UserId = req.user.id; 
+      // 1. Validasi: pastikan ada setidaknya 1 gambar
+      // Jika upload gagal di Multer (misalnya tidak ada file), error akan di-catch oleh handleError
       if (!req.files || req.files.length === 0) {
         throw { name: "BadRequest", message: "At least one image is required to create a post." };
       }
 
-      // Create a new post
+      // 2. Buat postingan baru di database
       const post = await Post.create({
         content,
-        isPrivate,
+        // Konversi string 'true'/'false' ke boolean
+        isPrivate: isPrivate === 'true' || isPrivate === true, // handle both string and actual boolean if any
         CategoryId: categoryId,
-        UserId: req.user.id,
+        UserId,
       });
 
-      // Save all images to the Image table
-      const images = req.files.map((file) => ({
-        imageUrl: file.path,
+      // 3. Ambil URL gambar dari req.files (yang sudah diunggah oleh multer-storage-cloudinary)
+      const imagesToCreate = req.files.map((file) => ({
+        imageUrl: file.path, 
         PostId: post.id,
       }));
 
-      await Image.bulkCreate(images);
+      await Image.bulkCreate(imagesToCreate);
 
-      res.status(201).json({ message: "Post created successfully", post });
+      res.status(201).json({ 
+        message: "Post created successfully", 
+        post, 
+        images: imagesToCreate 
+      }); 
     } catch (err) {
       next(err);
     }

@@ -36,7 +36,7 @@ describe('Cloudinary Config', () => {
     // Set up environment variables
     process.env.CLOUDINARY_CLOUD_NAME = 'test-cloud';
     process.env.CLOUDINARY_API_KEY = 'test-key';
-    process.env.CLOUDINARY_SECRET = 'test-secret';
+    process.env.CLOUDINARY_API_SECRET = 'test-secret';
     jest.resetModules();
 
     cloudinary = require('cloudinary');
@@ -48,7 +48,7 @@ describe('Cloudinary Config', () => {
     jest.clearAllMocks();
     delete process.env.CLOUDINARY_CLOUD_NAME;
     delete process.env.CLOUDINARY_API_KEY;
-    delete process.env.CLOUDINARY_SECRET;
+    delete process.env.CLOUDINARY_API_SECRET;
   });
 
   test('should configure cloudinary with correct credentials', () => {
