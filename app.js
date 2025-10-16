@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 const handleError = require('./helpers/handleError');
 const routes = require('./routes');
 const cors = require('cors'); 
@@ -54,7 +54,10 @@ io.on('connection', (socket) => {
 if (process.env.NODE_ENV !== 'test') { //comment untuk npx jest
   server.listen(port, () => {
     console.log(`App listening on port http://localhost:${port}`);
-  });
+  if (process.send) {
+      process.send('ready');
+    }});
+  
 }
 
 module.exports = app;
