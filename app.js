@@ -54,9 +54,7 @@ io.on('connection', (socket) => {
 if (process.env.NODE_ENV !== 'test') { //comment untuk npx jest
   server.listen(port, () => {
     console.log(`App listening on port http://localhost:${port}`);
-  if (process.send) {
-      process.send('ready');
-    }});
+  });
   
 }
 
