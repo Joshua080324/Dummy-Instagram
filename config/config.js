@@ -20,6 +20,7 @@ module.exports = {
     url: process.env.DATABASE_URL,
     dialect: 'postgres',
     logging: false,
+    define: { timestamps: true },
     dialectOptions: useSSL ? { ssl: { require: true, rejectUnauthorized: false } } : {},
   },
 
@@ -27,6 +28,7 @@ module.exports = {
     url: process.env.DATABASE_URL,
     dialect: 'postgres',
     logging: false,
+    define: { timestamps: true },
     dialectOptions: useSSL ? { ssl: { require: true, rejectUnauthorized: false } } : {},
   },
 };
