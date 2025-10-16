@@ -3,10 +3,8 @@
 module.exports = {
   apps: [
     {
-      name: 'nama-aplikasi-anda', // Ganti dengan nama aplikasi Anda
+      name: 'Dummy-Instagrams', // Ganti dengan nama aplikasi Anda
       script: 'app.js', // Ganti dengan file entri utama aplikasi Anda (misal: app.js, server.js)
-      instances: 'max',
-      exec_mode: 'cluster',
       env: {
         // --- General Configuration ---
         NODE_ENV: 'production',
