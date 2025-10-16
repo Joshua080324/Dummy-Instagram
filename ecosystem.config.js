@@ -4,7 +4,7 @@ module.exports = {
   apps: [
     {
       name: 'nama-aplikasi-anda', // Ganti dengan nama aplikasi Anda
-      script: 'index.js', // Ganti dengan file entri utama aplikasi Anda (misal: app.js, server.js)
+      script: 'app.js', // Ganti dengan file entri utama aplikasi Anda (misal: app.js, server.js)
       instances: 'max',
       exec_mode: 'cluster',
       env: {
