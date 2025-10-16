@@ -45,7 +45,7 @@ class PostController {
       const posts = await Post.findAll({
         where: { isPrivate: false },
         include: [
-          { model: User, attributes: ["id", "username", "profilePic"] },
+          { model: User, attributes: ["id", "username", "email"] },
           { model: Image },
           { model: Category, attributes: ["name"] },
           { model: Like },
