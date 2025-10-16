@@ -112,36 +112,42 @@ class ChatController {
                 throw { name: "NotFound", message: "Chat not found" };
             }
 
-
-            // User harus menjadi pembuat atau partner dari chat tersebut.
             const isAuthorized = chat.UserId === userId || chat.partnerId === userId;
             if (!isAuthorized) {
                 throw { name: "Forbidden", message: "You are not authorized to access this chat" };
             }
 
-            // 1. Simpan dan kirim pesan dari user
+            // Pesan dari user tetap dibuat
             const userMessage = await Message.create({
                 ChatId: chatId,
                 senderId: userId,
                 content,
             });
-
             io.to(`chat_${chatId}`).emit("receive_message", userMessage);
 
+            // --- PERUBAHAN UTAMA UNTUK POSTMAN ---
             if (chat.isAIChat) {
+                // 1. Panggil Gemini dan TUNGGU (await) sampai ada jawaban
                 const aiResponseText = await askGemini(content);
 
+                // 2. Simpan jawaban AI ke database
                 const aiMessage = await Message.create({
                     ChatId: chatId,
-                    senderId: null,
+                    senderId: null, // AI tidak punya ID
                     content: aiResponseText,
                 });
 
+                // 3. Kirim juga jawaban AI via socket untuk klien web
                 io.to(`chat_${chatId}`).emit("receive_message", aiMessage);
+
+                // 4. Kirim JAWABAN AI sebagai respons HTTP ke Postman
+                return res.status(201).json(aiMessage);
+
+            } else {
+                // Untuk chat biasa, kembalikan pesan user seperti biasa
+                return res.status(201).json(userMessage);
             }
 
-            await chat.save();
-            res.status(201).json(userMessage);
         } catch (err) {
             next(err);
         }

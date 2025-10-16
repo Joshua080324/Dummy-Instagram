@@ -47,10 +47,6 @@ module.exports = (sequelize, DataTypes) => {
         notNull: { msg: `Password is required` }
       }
     },
-    profilePic: {
-      type: DataTypes.STRING,
-    },
-    bio: DataTypes.TEXT
   }, {
     sequelize,
     modelName: 'User',

@@ -1,0 +1,22 @@
+[
+  {
+    "isAIChat": false,
+    "UserId": 1,
+    "partnerId": 2
+  },
+  {
+    "isAIChat": false,
+    "UserId": 2,
+    "partnerId": 3
+  },
+  {
+    "isAIChat": true,
+    "UserId": 4,
+    "partnerId": null
+  },
+  {
+    "isAIChat": false,
+    "UserId": 3,
+    "partnerId": 5
+  }
+]

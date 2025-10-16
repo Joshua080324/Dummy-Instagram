@@ -213,7 +213,13 @@
 <a name='L148'></a><a href='#L148'>148</a>
 <a name='L149'></a><a href='#L149'>149</a>
 <a name='L150'></a><a href='#L150'>150</a>
-<a name='L151'></a><a href='#L151'>151</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -327,8 +333,6 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -340,23 +344,31 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -477,36 +489,42 @@ class ChatController {
                 throw { name: "NotFound", message: "Chat not found" };
             }
 &nbsp;
-&nbsp;
-            // User harus menjadi pembuat atau partner dari chat tersebut.
             const isAuthorized = chat.UserId === userId || chat.partnerId === userId;
             if (!isAuthorized) {
                 throw { name: "Forbidden", message: "You are not authorized to access this chat" };
             }
 &nbsp;
-            // 1. Simpan dan kirim pesan dari user
+            // Pesan dari user tetap dibuat
             const userMessage = await Message.create({
                 ChatId: chatId,
                 senderId: userId,
                 content,
             });
-&nbsp;
             io.to(`chat_${chatId}`).emit("receive_message", userMessage);
 &nbsp;
+            // --- PERUBAHAN UTAMA UNTUK POSTMAN ---
             if (chat.isAIChat) {
+                // 1. Panggil Gemini dan TUNGGU (await) sampai ada jawaban
                 const aiResponseText = await askGemini(content);
 &nbsp;
+                // 2. Simpan jawaban AI ke database
                 const aiMessage = await Message.create({
                     ChatId: chatId,
-                    senderId: null,
+                    senderId: null, // AI tidak punya ID
                     content: aiResponseText,
                 });
 &nbsp;
+                // 3. Kirim juga jawaban AI via socket untuk klien web
                 io.to(`chat_${chatId}`).emit("receive_message", aiMessage);
+&nbsp;
+                // 4. Kirim JAWABAN AI sebagai respons HTTP ke Postman
+                return res.status(201).json(aiMessage);
+&nbsp;
+            } else {
+                // Untuk chat biasa, kembalikan pesan user seperti biasa
+                return res.status(201).json(userMessage);
             }
 &nbsp;
-            await chat.save();
-            res.status(201).json(userMessage);
         } catch (err) {
             next(err);
         }
@@ -520,7 +538,7 @@ module.exports = ChatController;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-16T04:01:59.618Z
+                at 2025-10-16T05:18:13.923Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -1,0 +1,58 @@
+[
+  {
+    "content": "Beautiful sunset at the beach! 🌅",
+    "UserId": 1,
+    "CategoryId": 1,
+    "images": [
+      {
+        "imageUrl": "https://res.cloudinary.com/dxs0yxeyr/image/upload/v1697435786/nature1_kj2mql.jpg"
+      },
+      {
+        "imageUrl": "https://res.cloudinary.com/dxs0yxeyr/image/upload/v1697435786/nature2_ls3nop.jpg"
+      }
+    ]
+  },
+  {
+    "content": "Delicious homemade pasta! 🍝",
+    "UserId": 2,
+    "CategoryId": 2,
+    "images": [
+      {
+        "imageUrl": "https://res.cloudinary.com/dxs0yxeyr/image/upload/v1697435786/food1_rt4mqk.jpg"
+      }
+    ]
+  },
+  {
+    "content": "Exploring the streets of Tokyo 🗼",
+    "UserId": 2,
+    "CategoryId": 3,
+    "images": [
+      {
+        "imageUrl": "https://res.cloudinary.com/dxs0yxeyr/image/upload/v1697435786/travel1_uw5nxz.jpg"
+      },
+      {
+        "imageUrl": "https://res.cloudinary.com/dxs0yxeyr/image/upload/v1697435786/travel2_vq6mry.jpg"
+      }
+    ]
+  },
+  {
+    "content": "New collection dropping soon! 👗",
+    "UserId": 4,
+    "CategoryId": 4,
+    "images": [
+      {
+        "imageUrl": "https://res.cloudinary.com/dxs0yxeyr/image/upload/v1697435786/fashion1_sh8tpv.jpg"
+      }
+    ]
+  },
+  {
+    "content": "Latest tech gadgets review 📱",
+    "UserId": 3,
+    "CategoryId": 5,
+    "images": [
+      {
+        "imageUrl": "https://res.cloudinary.com/dxs0yxeyr/image/upload/v1697435786/tech1_iy9wqm.jpg"
+      }
+    ]
+  }
+]
