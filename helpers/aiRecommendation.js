@@ -8,9 +8,6 @@ async function getAIRecommendations(userId) {
     const model = genAI.getGenerativeModel({ 
       model: "gemini-2.0-flash-exp",
       generationConfig: {
-        temperature: 0.1,
-        topP: 0.9,
-        topK: 10,
         maxOutputTokens: 50,
       }
     });
