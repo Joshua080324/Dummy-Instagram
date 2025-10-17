@@ -30,11 +30,11 @@ async function getAIRecommendations(userId) {
     }
 
     const validPosts = likedPosts.filter(like => like.Post && like.Post.Category);
-    
     const categoryCount = {};
+    
     validPosts.forEach(like => {
-      const categoryName = like.Post.Category.name;
-      categoryCount[categoryName] = (categoryCount[categoryName] || 0) + 1;
+      const cat = like.Post.Category.name;
+      categoryCount[cat] = (categoryCount[cat] || 0) + 1;
     });
 
     if (Object.keys(categoryCount).length === 0) {
@@ -46,18 +46,11 @@ async function getAIRecommendations(userId) {
       });
     }
 
-    const sortedCategories = Object.entries(categoryCount)
-      .sort((a, b) => b[1] - a[1]);
+    const sorted = Object.entries(categoryCount).sort((a, b) => b[1] - a[1]);
+    const topCategory = sorted[0][0];
+    const stats = sorted.map(([cat, count]) => `${cat}:${count}`).join(', ');
 
-    const topCategory = sortedCategories[0][0];
-
-    const availableCategories = ["Travel", "Food", "Fashion", "Technology", "Lifestyle"];
-
-    const categoryStats = sortedCategories
-      .map(([cat, count]) => `${cat}:${count}`)
-      .join(', ');
-
-    const prompt = `User liked these categories with counts: ${categoryStats}
+    const prompt = `User liked these categories with counts: ${stats}
 
 Available categories: Travel, Food, Fashion, Technology, Lifestyle
 
@@ -68,16 +61,12 @@ Format: CategoryName`;
     const result = await model.generateContent(prompt);
     const aiResponse = result.response.text().trim();
     
-    let aiCategory = aiResponse
-      .replace(/['"]/g, '')
-      .trim();
-
-    let finalCategory;
-    if (aiCategory && availableCategories.includes(aiCategory)) {
-      finalCategory = aiCategory;
-    } else {
-      finalCategory = topCategory;
-    }
+    let aiCategory = aiResponse.replace(/['"]/g, '').trim();
+    const availableCategories = ["Travel", "Food", "Fashion", "Technology", "Lifestyle"];
+    
+    let finalCategory = (aiCategory && availableCategories.includes(aiCategory)) 
+      ? aiCategory 
+      : topCategory;
     
     const recommendedPosts = await Post.findAll({
       where: {
@@ -96,8 +85,6 @@ Format: CategoryName`;
     
     return recommendedPosts;
   } catch (err) {
-    console.error("Error in AI recommendations:", err.message);
-    
     try {
       return await Post.findAll({
         where: { isPrivate: false },
@@ -106,7 +93,6 @@ Format: CategoryName`;
         limit: 10,
       });
     } catch (fallbackErr) {
-      console.error("Fallback failed:", fallbackErr.message);
       return [];
     }
   }

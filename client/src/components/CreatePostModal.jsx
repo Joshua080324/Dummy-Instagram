@@ -35,7 +35,6 @@ const CreatePostModal = ({ show, onHide, onPostCreated }) => {
 
     setImages([...images, ...files]);
 
-    // Create previews
     files.forEach(file => {
       const reader = new FileReader();
       reader.onloadend = () => {

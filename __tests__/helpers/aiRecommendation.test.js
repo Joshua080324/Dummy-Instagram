@@ -128,14 +128,8 @@ describe("AI Recommendation", () => {
 
     Like.findAll.mockRejectedValue(mockError);
     Post.findAll.mockResolvedValue(mockDefaultPosts);
-    console.error = jest.fn();
 
     const result = await aiRecommendation.getAIRecommendations(userId);
-
-    expect(console.error).toHaveBeenCalledWith(
-      "Error in AI recommendations:",
-      "Database error"
-    );
 
     expect(Post.findAll).toHaveBeenCalledWith({
       where: { isPrivate: false },

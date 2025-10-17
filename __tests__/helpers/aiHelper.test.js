@@ -48,12 +48,10 @@ describe('AI Helper', () => {
 
   test('should handle error from Gemini', async () => {
     mockGenerateContent.mockRejectedValue(new Error('API Error'));
-    console.error = jest.fn();
 
     const result = await aiHelper.askGemini('Test prompt');
 
-    expect(console.error).toHaveBeenCalled();
-    expect(result).toBe('Maaf, saya mengalami kesulitan menjawab saat ini.');
+    expect(result).toBe('Sorry, I\'m having trouble responding right now.');
   });
 
   test('should handle empty text', async () => {

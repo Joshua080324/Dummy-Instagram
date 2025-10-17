@@ -47,7 +47,6 @@ const DiscoverUsersModal = ({ show, onHide, onChatCreated }) => {
         setUsers(uniqueUsers);
       }
     } catch (error) {
-      console.error('Error fetching users:', error);
       Swal.fire({
         icon: 'error',
         title: 'Failed to load users',
@@ -77,7 +76,6 @@ const DiscoverUsersModal = ({ show, onHide, onChatCreated }) => {
       
       onHide();
     } catch (error) {
-      console.error('Error creating chat:', error);
       Swal.fire({
         icon: 'error',
         title: 'Failed to create chat',

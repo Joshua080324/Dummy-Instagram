@@ -29,7 +29,6 @@ const Messages = () => {
   const [showDiscoverModal, setShowDiscoverModal] = useState(false);
   const messagesEndRef = useRef(null);
   
-  // Safe way to get current user ID
   const getCurrentUserId = () => {
     try {
       const token = localStorage.getItem('access_token');
@@ -37,20 +36,14 @@ const Messages = () => {
       const payload = JSON.parse(atob(token.split('.')[1]));
       return payload.id;
     } catch (error) {
-      console.error('Error parsing token:', error);
       return null;
     }
   };
   
   const currentUserId = getCurrentUserId();
 
-  // Fetch all user chats
   useEffect(() => {
-    console.log('Messages component mounted');
-    console.log('Current User ID:', currentUserId);
-    
     if (!currentUserId) {
-      console.error('No user ID found! Redirecting to login...');
       navigate('/login');
       return;
     }
@@ -58,7 +51,6 @@ const Messages = () => {
     fetchChats();
   }, []);
 
-  // Fetch messages when chat is selected
   useEffect(() => {
     if (selectedChat) {
       fetchMessages(selectedChat.id);
@@ -77,22 +69,13 @@ const Messages = () => {
   const fetchChats = async () => {
     try {
       setLoading(true);
-      console.log('Fetching chats...');
       const { data } = await http.get('/chats');
-      console.log('Chats received:', data);
       
-      // Filter only non-AI chats
       const userChats = data.filter(chat => !chat.isAIChat);
-      console.log('User chats (non-AI):', userChats);
       setChats(userChats);
     } catch (error) {
-      console.error('Error fetching chats:', error);
-      console.error('Error details:', error.response?.data);
-      
-      // Set empty array jika error (normal jika belum ada chat)
       setChats([]);
       
-      // Only show error alert if it's not a server error
       if (error.response?.status !== 500) {
         Swal.fire({
           icon: 'info',
@@ -110,13 +93,10 @@ const Messages = () => {
 
   const fetchMessages = async (chatId) => {
     try {
-      console.log('Fetching messages for chat:', chatId);
       const { data } = await http.get(`/chats/${chatId}/messages`);
-      console.log('Messages received:', data);
       setMessages(data);
     } catch (error) {
-      console.error('Error fetching messages:', error);
-      console.error('Error details:', error.response?.data);
+      // Silent fail
     }
   };
 
@@ -133,10 +113,8 @@ const Messages = () => {
       setMessages([...messages, data]);
       setNewMessage('');
       
-      // Update chat list order
       fetchChats();
     } catch (error) {
-      console.error('Error sending message:', error);
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -522,7 +500,7 @@ const Messages = () => {
                         </Button>
                       </div>
                       <small className="text-muted d-block mt-2 ms-1">
-                        💡 Press <strong>Enter</strong> to send, <strong>Shift + Enter</strong> for new line
+                        Press <strong>Enter</strong> to send, <strong>Shift + Enter</strong> for new line
                       </small>
                     </Form>
                   </Card.Footer>

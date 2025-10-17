@@ -18,7 +18,6 @@ class AIController {
         data: plainPosts,
       });
     } catch (err) {
-      console.error("Error in AIController:", err.message);
       next(err);
     }
   }

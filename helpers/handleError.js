@@ -1,6 +1,4 @@
 function handleError(err, req,res, next) {
-  console.error("Error:", err);
-
   if (err.name === "Unauthorized") {
     return res.status(401).json({ message: "Unauthorized access" });
   }

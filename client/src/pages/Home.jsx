@@ -26,10 +26,7 @@ const Home = () => {
   const [loadingRecommended, setLoadingRecommended] = useState(false);
 
   useEffect(() => {
-    // Initialize auth from token
     dispatch(initializeAuth());
-    
-    // Fetch posts
     dispatch(fetchPosts());
   }, [dispatch]);
 
@@ -40,14 +37,12 @@ const Home = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  // Fetch AI recommendations
   const fetchRecommendations = async () => {
     try {
       setLoadingRecommended(true);
       const { data } = await http.get('/ai/recommendations');
       setRecommendedPosts(data.data || []);
     } catch (error) {
-      console.error('Error fetching recommendations:', error.message);
       setRecommendedPosts(posts);
     } finally {
       setLoadingRecommended(false);

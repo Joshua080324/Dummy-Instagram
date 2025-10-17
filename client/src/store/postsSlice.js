@@ -8,7 +8,6 @@ const initialState = {
   error: null,
 };
 
-// Fetch all public posts
 export const fetchPosts = createAsyncThunk(
   'posts/fetchPosts',
   async (_, { rejectWithValue }) => {
@@ -21,7 +20,6 @@ export const fetchPosts = createAsyncThunk(
   }
 );
 
-// Create new post
 export const createPost = createAsyncThunk(
   'posts/createPost',
   async (formData, { rejectWithValue }) => {
@@ -38,7 +36,6 @@ export const createPost = createAsyncThunk(
   }
 );
 
-// Update post
 export const updatePost = createAsyncThunk(
   'posts/updatePost',
   async ({ postId, postData }, { rejectWithValue }) => {
@@ -51,7 +48,6 @@ export const updatePost = createAsyncThunk(
   }
 );
 
-// Delete post
 export const deletePost = createAsyncThunk(
   'posts/deletePost',
   async (postId, { rejectWithValue }) => {

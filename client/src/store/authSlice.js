@@ -9,7 +9,6 @@ const initialState = {
   isAuthenticated: !!localStorage.getItem('access_token'),
 };
 
-// Get user from token
 const getUserFromToken = (token) => {
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
@@ -19,7 +18,6 @@ const getUserFromToken = (token) => {
   }
 };
 
-// Register
 export const register = createAsyncThunk(
   'auth/register',
   async (userData, { rejectWithValue }) => {
@@ -32,7 +30,6 @@ export const register = createAsyncThunk(
   }
 );
 
-// Login
 export const login = createAsyncThunk(
   'auth/login',
   async (credentials, { rejectWithValue }) => {
@@ -47,7 +44,6 @@ export const login = createAsyncThunk(
   }
 );
 
-// Google Sign In
 export const googleSignIn = createAsyncThunk(
   'auth/googleSignIn',
   async (googleToken, { rejectWithValue }) => {
@@ -79,7 +75,6 @@ const authSlice = createSlice({
       state.user = action.payload;
       state.isAuthenticated = !!action.payload;
     },
-    // Initialize user from token on app load
     initializeAuth(state) {
       const token = localStorage.getItem('access_token');
       if (token) {
@@ -91,21 +86,18 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Register
       .addCase(register.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
-        // Registration doesn't auto-login
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
       
-      // Login
       .addCase(login.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -122,7 +114,6 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
       })
       
-      // Google Sign In
       .addCase(googleSignIn.pending, (state) => {
         state.loading = true;
         state.error = null;

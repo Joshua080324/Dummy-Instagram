@@ -28,7 +28,6 @@ const EditPostModal = ({ show, onHide, post, onPostUpdated }) => {
       const { data } = await http.get('/categories');
       setCategories(data);
     } catch (error) {
-      console.error('Error fetching categories:', error);
       // Fallback categories if API fails
       setCategories([
         { id: 1, name: 'Travel' },
@@ -76,7 +75,6 @@ const EditPostModal = ({ show, onHide, post, onPostUpdated }) => {
       onPostUpdated();
       onHide();
     } catch (error) {
-      console.error('Error updating post:', error);
       Swal.fire({
         icon: 'error',
         title: 'Update failed',

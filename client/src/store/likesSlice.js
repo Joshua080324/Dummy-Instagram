@@ -2,13 +2,12 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import http from '../helpers/http';
 
 const initialState = {
-  likedById: {}, // postId -> boolean
-  counts: {}, // postId -> number
-  loading: {}, // postId -> boolean (loading state per post)
+  likedById: {},
+  counts: {},
+  loading: {},
   error: null,
 };
 
-// Async thunk for toggling like
 export const toggleLikeAsync = createAsyncThunk(
   'likes/toggleLike',
   async (postId, { rejectWithValue }) => {
@@ -33,7 +32,6 @@ const likesSlice = createSlice({
       const { postId, count } = action.payload;
       state.counts[postId] = count;
     },
-    // Keep for backward compatibility or manual updates
     toggleLike(state, action) {
       const postId = action.payload;
       const current = !!state.likedById[postId];
@@ -43,7 +41,6 @@ const likesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Handle pending state
       .addCase(toggleLikeAsync.pending, (state, action) => {
         const postId = action.meta.arg;
         state.loading[postId] = true;
@@ -54,19 +51,15 @@ const likesSlice = createSlice({
         state.likedById[postId] = !current;
         state.counts[postId] = (state.counts[postId] || 0) + (current ? -1 : 1);
       })
-      // Handle success
       .addCase(toggleLikeAsync.fulfilled, (state, action) => {
         const postId = action.meta.arg;
         state.loading[postId] = false;
-        // State already updated optimistically
       })
-      // Handle error - rollback optimistic update
       .addCase(toggleLikeAsync.rejected, (state, action) => {
         const postId = action.meta.arg;
         state.loading[postId] = false;
         state.error = action.payload;
         
-        // Rollback optimistic update
         const current = !!state.likedById[postId];
         state.likedById[postId] = !current;
         state.counts[postId] = (state.counts[postId] || 0) + (current ? -1 : 1);

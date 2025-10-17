@@ -20,7 +20,6 @@ const StartChatModal = ({ show, onHide }) => {
       const payload = JSON.parse(atob(token.split('.')[1]));
       return payload.id;
     } catch (error) {
-      console.error('Error parsing token:', error);
       return null;
     }
   };
@@ -36,11 +35,9 @@ const StartChatModal = ({ show, onHide }) => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      console.log('Fetching users from posts...');
       
       // Fetch posts to get unique users
       const { data } = await http.get('/posts');
-      console.log('Posts data:', data);
       
       // Extract unique users from posts (excluding current user)
       const uniqueUsers = [];
@@ -57,11 +54,8 @@ const StartChatModal = ({ show, onHide }) => {
         }
       });
 
-      console.log('Unique users found:', uniqueUsers);
       setUsers(uniqueUsers);
     } catch (error) {
-      console.error('Error fetching users:', error);
-      console.error('Error details:', error.response?.data);
     } finally {
       setLoading(false);
     }
@@ -84,7 +78,6 @@ const StartChatModal = ({ show, onHide }) => {
       onHide();
       navigate('/messages');
     } catch (error) {
-      console.error('Error starting chat:', error);
       Swal.fire({
         icon: 'error',
         title: 'Error',

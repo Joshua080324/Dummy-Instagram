@@ -3,17 +3,15 @@ const { Op } = Sequelize;
 const { askGemini } = require("../helpers/aiHelper");
 
 class ChatController {
-    // Mencegah duplikasi chat
     static async createOrGetChat(req, res, next) {
         try {
             const { partnerId } = req.body;
             const userId = req.user.id;
 
-            if (partnerId == userId) { //  Validasi agar tidak chat dengan diri sendiri
+            if (partnerId == userId) {
                 throw { name: "BadRequest", message: "You cannot create a chat with yourself." };
             }
 
-            // Cari chat yang sudah ada antara kedua user
             const [chat, created] = await Chat.findOrCreate({
                 where: {
                     [Op.or]: [
@@ -34,7 +32,6 @@ class ChatController {
         }
     }
 
-    // Menampilkan semua chat dimana user terlibat
     static async getUserChats(req, res, next) {
         try {
             const userId = req.user.id;
@@ -51,18 +48,15 @@ class ChatController {
 
             res.json(chats);
         } catch (err) {
-            console.error('Error in getUserChats:', err);
             next(err);
         }
     }
 
-    // Menambahkan validasi keamanan
     static async getChatMessages(req, res, next) {
         try {
             const { chatId } = req.params;
             const userId = req.user.id;
 
-            // Validasi: Pastikan user adalah bagian dari chat ini
             const chat = await Chat.findByPk(chatId);
             if (!chat || (chat.UserId !== userId && chat.partnerId !== userId)) {
                 throw { name: "Forbidden" };
@@ -91,7 +85,7 @@ class ChatController {
                 defaults: {
                     UserId: userId,
                     isAIChat: true,
-                    partnerId: null, // Tidak ada partner untuk AI chat
+                    partnerId: null,
                 },
             });
             res.status(created ? 201 : 200).json(chat);
@@ -118,7 +112,6 @@ class ChatController {
                 throw { name: "Forbidden", message: "You are not authorized to access this chat" };
             }
 
-            // Pesan dari user tetap dibuat
             const userMessage = await Message.create({
                 ChatId: chatId,
                 senderId: userId,
@@ -126,26 +119,17 @@ class ChatController {
             });
             io.to(`chat_${chatId}`).emit("receive_message", userMessage);
 
-            // --- PERUBAHAN UTAMA UNTUK POSTMAN ---
             if (chat.isAIChat) {
-                // 1. Panggil Gemini dan TUNGGU (await) sampai ada jawaban
                 const aiResponseText = await askGemini(content);
-
-                // 2. Simpan jawaban AI ke database
                 const aiMessage = await Message.create({
                     ChatId: chatId,
-                    senderId: null, // AI tidak punya ID
+                    senderId: null,
                     content: aiResponseText,
                 });
 
-                // 3. Kirim juga jawaban AI via socket untuk klien web
                 io.to(`chat_${chatId}`).emit("receive_message", aiMessage);
-
-                // 4. Kirim JAWABAN AI sebagai respons HTTP ke Postman
                 return res.status(201).json(aiMessage);
-
             } else {
-                // Untuk chat biasa, kembalikan pesan user seperti biasa
                 return res.status(201).json(userMessage);
             }
 

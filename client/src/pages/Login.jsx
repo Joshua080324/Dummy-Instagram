@@ -51,15 +51,12 @@ const Login = () => {
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
-    console.log('Google Login Success:', credentialResponse);
     setLoading(true);
     try {
-      console.log('Sending Google token to backend...');
       const { data } = await http.post('/users/auth/google', {
         google_token: credentialResponse.credential,
       });
       
-      console.log('Backend response:', data);
       localStorage.setItem('access_token', data.access_token);
       
       Swal.fire({
@@ -76,8 +73,6 @@ const Login = () => {
         navigate('/');
       }, 1500);
     } catch (error) {
-      console.error('Google Login Error:', error);
-      console.error('Error response:', error.response?.data);
       Swal.fire({
         icon: 'error',
         title: 'Google Login Failed',
@@ -90,8 +85,7 @@ const Login = () => {
     }
   };
 
-  const handleGoogleError = (error) => {
-    console.error('Google OAuth Error:', error);
+  const handleGoogleError = () => {
     Swal.fire({
       icon: 'error',
       title: 'Google Login Failed',

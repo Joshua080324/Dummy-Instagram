@@ -29,25 +29,21 @@ const AIChatModal = ({ show, onHide }) => {
   const initializeChat = async () => {
     try {
       setLoading(true);
-      // Create or get AI chat
       const { data: chat } = await http.post('/chats/ai');
       setChatId(chat.id);
       
-      // Load existing messages
       const { data: msgs } = await http.get(`/chats/${chat.id}/messages`);
       setMessages(msgs);
       
-      // Welcome message if no messages
       if (msgs.length === 0) {
         setMessages([{
           id: 'welcome',
-          content: "Hello! I'm your AI assistant. How can I help you today? 🤖",
+          content: "Hello! I'm your AI assistant. How can I help you today?",
           senderId: null,
           createdAt: new Date().toISOString()
         }]);
       }
     } catch (error) {
-      console.error('Error initializing chat:', error);
       Swal.fire({
         icon: 'error',
         title: 'Failed to start chat',
@@ -67,7 +63,6 @@ const AIChatModal = ({ show, onHide }) => {
     setNewMessage('');
     setSending(true);
 
-    // Add user message to UI immediately
     const userMsg = {
       id: Date.now(),
       content: messageContent,
@@ -77,15 +72,12 @@ const AIChatModal = ({ show, onHide }) => {
     setMessages(prev => [...prev, userMsg]);
 
     try {
-      // Send message to backend
       const { data: aiResponse } = await http.post(`/chats/${chatId}/messages`, {
         content: messageContent
       });
 
-      // Add AI response to messages
       setMessages(prev => [...prev, aiResponse]);
     } catch (error) {
-      console.error('Error sending message:', error);
       Swal.fire({
         icon: 'error',
         title: 'Failed to send message',
@@ -300,7 +292,7 @@ const AIChatModal = ({ show, onHide }) => {
             </Button>
           </div>
           <small className="text-muted d-block mt-2 ms-1">
-            💡 Tip: Press <strong>Enter</strong> to send, <strong>Shift + Enter</strong> for new line
+            Tip: Press <strong>Enter</strong> to send, <strong>Shift + Enter</strong> for new line
           </small>
         </Form>
       </Modal.Footer>
