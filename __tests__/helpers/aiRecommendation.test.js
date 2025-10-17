@@ -1,16 +1,16 @@
 const { Op } = require("sequelize");
 
-// ✅ Mock duluan SEBELUM require helper
 jest.mock("../../models", () => ({
   Post: {},
   Like: {},
   Category: {},
   User: {},
+  Image: {},
 }));
 
 jest.mock("@google/generative-ai", () => {
   const mockGenerateContent = jest.fn().mockResolvedValue({
-    response: { text: () => "Tech, Food, Sports" },
+    response: { text: () => "Tech" },
   });
 
   return {
@@ -24,24 +24,25 @@ jest.mock("@google/generative-ai", () => {
 
 describe("AI Recommendation", () => {
   let aiRecommendation;
-  let Like, Post, Category, User;
+  let Like, Post, Category, User, Image;
   let mockModel;
 
   beforeEach(() => {
     jest.resetModules();
     process.env.GEMINI_API_KEY = "test-key";
 
-    // Import setelah mock siap
     const models = require("../../models");
     Like = models.Like;
     Post = models.Post;
     Category = models.Category;
     User = models.User;
+    Image = models.Image;
 
     Like.findAll = jest.fn();
     Post.findAll = jest.fn();
     Category.findAll = jest.fn();
     User.findAll = jest.fn();
+    Image.findAll = jest.fn();
 
     const { GoogleGenerativeAI } = require("@google/generative-ai");
     mockModel = new GoogleGenerativeAI().getGenerativeModel();
@@ -71,7 +72,7 @@ describe("AI Recommendation", () => {
 
     expect(Post.findAll).toHaveBeenCalledWith({
       where: { isPrivate: false },
-      include: [Category, User, Like],
+      include: [Category, User, Like, Image],
       order: [["createdAt", "DESC"]],
       limit: 10,
     });
@@ -98,9 +99,9 @@ describe("AI Recommendation", () => {
     expect(mockGenerateContent).toHaveBeenCalled();
 
     const prompt = mockGenerateContent.mock.calls[0][0];
-    expect(prompt).toContain("Anda adalah sistem rekomendasi konten");
-    expect(prompt).toContain("Post 1");
-    expect(prompt).toContain("Tech");
+    expect(prompt).toContain("User liked these categories with counts:");
+    expect(prompt).toContain("Tech:");
+    expect(prompt).toContain("Available categories: Travel, Food, Fashion, Technology, Lifestyle");
 
     expect(Post.findAll).toHaveBeenCalledWith({
       where: {
@@ -108,9 +109,10 @@ describe("AI Recommendation", () => {
         UserId: { [Op.ne]: userId },
       },
       include: [
-        { model: Category, where: { name: { [Op.in]: ["Tech", "Food", "Sports"] } } },
+        { model: Category, where: { name: "Tech" } },
         User,
         Like,
+        Image
       ],
       order: [["createdAt", "DESC"]],
       limit: 20,
@@ -131,13 +133,13 @@ describe("AI Recommendation", () => {
     const result = await aiRecommendation.getAIRecommendations(userId);
 
     expect(console.error).toHaveBeenCalledWith(
-      "Error getting AI recommendations:",
-      mockError
+      "Error in AI recommendations:",
+      "Database error"
     );
 
     expect(Post.findAll).toHaveBeenCalledWith({
       where: { isPrivate: false },
-      include: [Category, User, Like],
+      include: [Category, User, Like, Image],
       order: [["createdAt", "DESC"]],
       limit: 10,
     });
@@ -168,7 +170,7 @@ describe("AI Recommendation", () => {
 
     expect(mockGenerateContent).toHaveBeenCalled();
     const callArgs = mockGenerateContent.mock.calls[0][0];
-    expect(callArgs).toContain("Kategori: Umum");
+    expect(callArgs).toContain("Food:");
     expect(result).toEqual(mockRecommendedPosts);
   });
 });

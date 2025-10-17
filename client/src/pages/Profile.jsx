@@ -1,74 +1,94 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Button, Card, Spinner, Nav } from 'react-bootstrap';
-import { ArrowLeft, GearFill, GridFill, BookmarkFill } from 'react-bootstrap-icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { Container, Row, Col, Button, Card, Spinner } from 'react-bootstrap';
+import { ArrowLeft, GearFill, GridFill } from 'react-bootstrap-icons';
 import Swal from 'sweetalert2';
-import http from '../helpers/http';
 import PostCard from '../components/PostCard';
+import EditPostModal from '../components/EditPostModal';
+import { fetchPosts, deletePost } from '../store/postsSlice';
+import { logout, initializeAuth } from '../store/authSlice';
 
 const Profile = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('posts'); // 'posts' or 'liked'
+  const dispatch = useDispatch();
+  
+  // Redux state
+  const { posts, loading } = useSelector(state => state.posts);
+  const { user, isAuthenticated } = useSelector(state => state.auth);
+  
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
 
   useEffect(() => {
-    fetchUserData();
-    fetchUserPosts();
-  }, []);
+    // Initialize auth from token
+    dispatch(initializeAuth());
+    
+    // Fetch posts
+    dispatch(fetchPosts());
+  }, [dispatch]);
 
-  const getCurrentUserId = () => {
-    try {
-      const token = localStorage.getItem('access_token');
-      if (!token) return null;
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.id;
-    } catch (error) {
-      console.error('Error parsing token:', error);
-      return null;
+  useEffect(() => {
+    // Redirect if not authenticated
+    if (!isAuthenticated) {
+      navigate('/login');
     }
+  }, [isAuthenticated, navigate]);
+
+  // Filter posts for current user
+  const userPosts = useMemo(() => {
+    if (!user?.id) return [];
+    return posts.filter(post => post.UserId === user.id);
+  }, [posts, user]);
+
+  const handleEditPost = (post) => {
+    setSelectedPost(post);
+    setShowEditModal(true);
   };
 
-  const fetchUserData = async () => {
-    try {
-      const userId = getCurrentUserId();
-      if (!userId) {
-        navigate('/login');
-        return;
+  const handlePostUpdated = () => {
+    dispatch(fetchPosts());
+  };
+
+  const handleDeletePost = async (postId) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'This post will be permanently deleted',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#667eea',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+      background: 'rgba(255, 255, 255, 0.95)',
+      backdrop: 'rgba(102, 126, 234, 0.4)',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await dispatch(deletePost(postId)).unwrap();
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Deleted!',
+          text: 'Your post has been deleted',
+          timer: 1500,
+          showConfirmButton: false,
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdrop: 'rgba(102, 126, 234, 0.4)',
+        });
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed to delete',
+          text: error || 'Something went wrong',
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdrop: 'rgba(102, 126, 234, 0.4)',
+        });
       }
-
-      // Kita ambil info user dari token atau bisa buat endpoint /users/me
-      const token = localStorage.getItem('access_token');
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      setUser(payload);
-    } catch (error) {
-      console.error('Error fetching user data:', error);
     }
   };
 
-  const fetchUserPosts = async () => {
-    try {
-      setLoading(true);
-      const userId = getCurrentUserId();
-      
-      // Fetch all posts dan filter by user
-      const { data } = await http.get('/posts');
-      const userPosts = data.filter(post => post.UserId === userId);
-      setPosts(userPosts);
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Failed to load posts',
-        text: error.response?.data?.message || 'Something went wrong',
-        background: 'rgba(255, 255, 255, 0.95)',
-        backdrop: 'rgba(102, 126, 234, 0.4)',
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleLogout = () => {
     Swal.fire({
@@ -84,7 +104,7 @@ const Profile = () => {
       backdrop: 'rgba(102, 126, 234, 0.4)',
     }).then((result) => {
       if (result.isConfirmed) {
-        localStorage.removeItem('access_token');
+        dispatch(logout());
         Swal.fire({
           icon: 'success',
           title: 'Logged out successfully!',
@@ -108,7 +128,7 @@ const Profile = () => {
       animation: 'gradient 15s ease infinite'
     }}>
       <Container fluid className="py-4" style={{ maxWidth: '800px' }}>
-        {/* Simple Header with Username */}
+        {/* Header with Username */}
         <Card 
           className="shadow-lg border-0 mb-4"
           style={{
@@ -142,8 +162,8 @@ const Profile = () => {
                   {user?.username?.charAt(0).toUpperCase() || 'U'}
                 </div>
                 <div>
-                  <h5 className="mb-0 fw-bold">{user?.username || 'My Posts'}</h5>
-                  <small className="text-muted">{posts.length} posts</small>
+                  <h5 className="mb-0 fw-bold">{user?.username || 'User'}</h5>
+                  <small className="text-muted">{userPosts.length} posts</small>
                 </div>
               </div>
               <Button
@@ -151,6 +171,7 @@ const Profile = () => {
                 onClick={handleLogout}
                 className="text-danger p-0"
                 style={{ fontSize: '20px', textDecoration: 'none' }}
+                title="Logout"
               >
                 <GearFill />
               </Button>
@@ -204,82 +225,33 @@ const Profile = () => {
                   fontWeight: 'bold'
                 }}
               >
-                Create Post
+                Go to Home
               </Button>
             </Card.Body>
           </Card>
         ) : (
           <Row>
-            {posts.map((post) => (
+            {userPosts.map((post) => (
               <Col xs={12} key={post.id} className="mb-4">
-                <PostCard post={post} onLikeToggle={fetchUserPosts} />
-              </Col>
-            ))}
-          </Row>
-        )}
-
-        {/* Tabs removed - keeping it simple */}
-        <Nav variant="tabs" className="mb-4 d-none" style={{ borderBottom: '2px solid rgba(255,255,255,0.3)' }}>
-          <Nav.Item>
-            <Nav.Link 
-              active={activeTab === 'posts'}
-              onClick={() => setActiveTab('liked')}
-              className="d-flex align-items-center"
-              style={{
-                color: activeTab === 'liked' ? '#667eea' : 'white',
-                fontWeight: activeTab === 'liked' ? 'bold' : 'normal',
-                borderBottom: activeTab === 'liked' ? '3px solid #667eea' : 'none',
-                background: 'transparent'
-              }}
-            >
-              <BookmarkFill className="me-2" />
-              Liked
-            </Nav.Link>
-          </Nav.Item>
-        </Nav>
-
-        {/* Posts Grid */}
-        {loading ? (
-          <div className="text-center py-5">
-            <Spinner animation="border" variant="light" size="lg" />
-          </div>
-        ) : posts.length === 0 ? (
-          <Card 
-            className="shadow-lg border-0 text-center py-5"
-            style={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(20px)',
-              borderRadius: '20px',
-            }}
-          >
-            <Card.Body>
-              <GridFill size={60} className="text-muted mb-3" />
-              <h5 className="text-muted">No posts yet</h5>
-              <p className="text-muted mb-4">Start sharing your moments!</p>
-              <Button
-                onClick={() => navigate('/')}
-                style={{
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  border: 'none',
-                  borderRadius: '12px',
-                  padding: '10px 30px',
-                  fontWeight: 'bold'
-                }}
-              >
-                Create Post
-              </Button>
-            </Card.Body>
-          </Card>
-        ) : (
-          <Row>
-            {posts.map((post) => (
-              <Col xs={12} key={post.id} className="mb-4">
-                <PostCard post={post} onLikeToggle={fetchUserPosts} />
+                <PostCard 
+                  post={post}
+                  onEdit={handleEditPost}
+                  onDelete={handleDeletePost}
+                  showActions={true}
+                />
               </Col>
             ))}
           </Row>
         )}
       </Container>
+
+      {/* Edit Post Modal */}
+      <EditPostModal
+        show={showEditModal}
+        onHide={() => setShowEditModal(false)}
+        post={selectedPost}
+        onPostUpdated={handlePostUpdated}
+      />
     </div>
   );
 };

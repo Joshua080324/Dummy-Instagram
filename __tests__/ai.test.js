@@ -10,7 +10,13 @@ describe('AIController', () => {
 
   describe('getRecommendations', () => {
     it('should return recommendations when user is authenticated', async () => {
-      const mockPosts = [{ id: 1, title: 'Post 1' }];
+      const mockPosts = [
+        { 
+          id: 1, 
+          title: 'Post 1',
+          toJSON: function() { return { id: this.id, title: this.title }; }
+        }
+      ];
       getAIRecommendations.mockResolvedValue(mockPosts);
 
       const req = { user: { id: 1 } };
@@ -26,7 +32,7 @@ describe('AIController', () => {
       expect(res.json).toHaveBeenCalledWith({
         message: "Rekomendasi berhasil dibuat",
         count: 1,
-        data: mockPosts
+        data: [{ id: 1, title: 'Post 1' }]
       });
     });
 

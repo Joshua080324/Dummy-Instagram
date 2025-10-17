@@ -93,13 +93,30 @@ class PostController {
   static async deletePost(req, res, next) {
     try {
       const { id } = req.params;
+      
+      console.log('Delete request for post:', id);
+      console.log('User ID from token:', req.user?.id);
+      
       const post = await Post.findByPk(id);
-      if (!post) throw { name: "NotFound" };
-      if (post.UserId !== req.user.id) throw { name: "Unauthorized" };
+      if (!post) {
+        console.log('Post not found:', id);
+        throw { name: "NotFound" };
+      }
+      
+      console.log('Post UserId:', post.UserId, typeof post.UserId);
+      console.log('Request User Id:', req.user.id, typeof req.user.id);
+      
+      // Use == instead of === to handle potential type mismatch
+      if (post.UserId != req.user.id) {
+        console.log('Unauthorized: User does not own this post');
+        throw { name: "Unauthorized" };
+      }
 
       await post.destroy();
+      console.log('Post deleted successfully:', id);
       res.json({ message: "Post deleted successfully" });
     } catch (err) {
+      console.error('Error in deletePost:', err);
       next(err);
     }
   }

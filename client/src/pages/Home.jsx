@@ -1,48 +1,71 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Button, Navbar, Spinner } from 'react-bootstrap';
-import { PlusCircleFill, ChatDotsFill, ChatLeftTextFill, PersonCircle } from 'react-bootstrap-icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { Container, Row, Col, Button, Navbar, Spinner, Nav } from 'react-bootstrap';
+import { PlusCircleFill, ChatDotsFill, ChatLeftTextFill, PersonCircle, Stars, HouseFill } from 'react-bootstrap-icons';
 import Swal from 'sweetalert2';
 import http from '../helpers/http';
 import PostCard from '../components/PostCard';
 import CreatePostModal from '../components/CreatePostModal';
 import AIChatModal from '../components/AIChatModal';
+import { fetchPosts } from '../store/postsSlice';
+import { logout, initializeAuth } from '../store/authSlice';
 
 const Home = () => {
   const navigate = useNavigate();
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  
+  // Redux state
+  const { posts, loading } = useSelector(state => state.posts);
+  const { user, isAuthenticated } = useSelector(state => state.auth);
+  
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showChatModal, setShowChatModal] = useState(false);
+  const [activeTab, setActiveTab] = useState('all'); // 'all' or 'recommended'
+  const [recommendedPosts, setRecommendedPosts] = useState([]);
+  const [loadingRecommended, setLoadingRecommended] = useState(false);
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    // Initialize auth from token
+    dispatch(initializeAuth());
+    
+    // Fetch posts
+    dispatch(fetchPosts());
+  }, [dispatch]);
 
-  const fetchPosts = async () => {
+  useEffect(() => {
+    // Redirect if not authenticated
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Fetch AI recommendations
+  const fetchRecommendations = async () => {
     try {
-      setLoading(true);
-      const { data } = await http.get('/posts');
-      setPosts(data);
+      setLoadingRecommended(true);
+      const { data } = await http.get('/ai/recommendations');
+      setRecommendedPosts(data.data || []);
     } catch (error) {
-      console.error('Error fetching posts:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Failed to load posts',
-        text: error.response?.data?.message || 'Something went wrong',
-      });
+      console.error('Error fetching recommendations:', error.message);
+      setRecommendedPosts(posts);
     } finally {
-      setLoading(false);
+      setLoadingRecommended(false);
     }
   };
 
+  useEffect(() => {
+    if (activeTab === 'recommended' && recommendedPosts.length === 0) {
+      fetchRecommendations();
+    }
+  }, [activeTab]);
+
   const handlePostCreated = () => {
-    fetchPosts();
+    dispatch(fetchPosts());
   };
 
   const handleLikeToggle = (postId) => {
-    // Refresh posts after like/unlike
-    fetchPosts();
+    // Posts will be updated via Redux, no need to refetch
   };
 
   const handleLogout = () => {
@@ -57,7 +80,7 @@ const Home = () => {
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
-        localStorage.removeItem('access_token');
+        dispatch(logout());
         Swal.fire({
           icon: 'success',
           title: 'Logged out successfully!',
@@ -144,8 +167,50 @@ const Home = () => {
       <Container className="py-4">
         <Row className="justify-content-center">
           <Col xs={12} md={8} lg={6}>
+            {/* Tabs for All Posts / For You */}
+            <Nav variant="pills" className="mb-4 justify-content-center">
+              <Nav.Item>
+                <Nav.Link
+                  active={activeTab === 'all'}
+                  onClick={() => setActiveTab('all')}
+                  className="d-flex align-items-center fw-semibold"
+                  style={{
+                    borderRadius: '12px',
+                    padding: '10px 20px',
+                    background: activeTab === 'all' 
+                      ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                      : 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    border: 'none'
+                  }}
+                >
+                  <HouseFill className="me-2" />
+                  All Posts
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item className="ms-2">
+                <Nav.Link
+                  active={activeTab === 'recommended'}
+                  onClick={() => setActiveTab('recommended')}
+                  className="d-flex align-items-center fw-semibold"
+                  style={{
+                    borderRadius: '12px',
+                    padding: '10px 20px',
+                    background: activeTab === 'recommended'
+                      ? 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+                      : 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    border: 'none'
+                  }}
+                >
+                  <Stars className="me-2" />
+                  For You
+                </Nav.Link>
+              </Nav.Item>
+            </Nav>
+
             {/* Loading State */}
-            {loading ? (
+            {(loading || (activeTab === 'recommended' && loadingRecommended)) ? (
               <div className="text-center py-5">
                 <Spinner 
                   animation="border" 
@@ -156,52 +221,73 @@ const Home = () => {
                     borderWidth: '4px'
                   }}
                 />
-                <p className="mt-3 text-white fw-semibold">Loading posts...</p>
+                <p className="mt-3 text-white fw-semibold">
+                  {activeTab === 'recommended' ? 'Loading recommendations...' : 'Loading posts...'}
+                </p>
               </div>
-            ) : posts.length === 0 ? (
+            ) : (activeTab === 'all' ? posts : recommendedPosts).length === 0 ? (
               /* Empty State */
               <div className="instagram-card text-center p-5">
                 <div className="mb-4">
-                  <svg 
-                    className="mx-auto text-secondary" 
-                    width="100" 
-                    height="100"
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth="2" 
-                      d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                    />
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth="2" 
-                      d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
+                  {activeTab === 'recommended' ? (
+                    <Stars size={80} className="text-warning" />
+                  ) : (
+                    <svg 
+                      className="mx-auto text-secondary" 
+                      width="100" 
+                      height="100"
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth="2" 
+                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                      />
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth="2" 
+                        d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                  )}
                 </div>
-                <h3 className="fw-bold mb-3 text-gradient">No Posts Yet!</h3>
+                <h3 className="fw-bold mb-3 text-gradient">
+                  {activeTab === 'recommended' 
+                    ? 'Like 3+ Posts to Get Recommendations!' 
+                    : 'No Posts Yet!'}
+                </h3>
                 <p className="mb-4" style={{ color: '#666' }}>
-                  Be the first to share your moments! 📸
+                  {activeTab === 'recommended'
+                    ? 'Start liking posts you enjoy, and AI will recommend content just for you! ✨'
+                    : 'Be the first to share your moments! 📸'}
                 </p>
                 <Button
                   variant="primary"
                   size="lg"
-                  onClick={() => setShowCreateModal(true)}
+                  onClick={() => activeTab === 'recommended' ? setActiveTab('all') : setShowCreateModal(true)}
                   className="instagram-button"
                 >
-                  <PlusCircleFill className="me-2" />
-                  Create Your First Post
+                  {activeTab === 'recommended' ? (
+                    <>
+                      <HouseFill className="me-2" />
+                      Browse All Posts
+                    </>
+                  ) : (
+                    <>
+                      <PlusCircleFill className="me-2" />
+                      Create Your First Post
+                    </>
+                  )}
                 </Button>
               </div>
             ) : (
               /* Posts Feed */
               <div className="posts-feed">
-                {posts.map(post => (
+                {(activeTab === 'all' ? posts : recommendedPosts).map(post => (
                   <PostCard 
                     key={post.id} 
                     post={post}

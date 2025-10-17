@@ -7,6 +7,15 @@ const bcrypt = require('bcryptjs');
 module.exports = {
   async up(queryInterface, Sequelize) {
     try {
+      // Reset all sequences to start from 1
+      await queryInterface.sequelize.query('TRUNCATE TABLE "Categories" RESTART IDENTITY CASCADE');
+      await queryInterface.sequelize.query('TRUNCATE TABLE "Users" RESTART IDENTITY CASCADE');
+      await queryInterface.sequelize.query('TRUNCATE TABLE "Posts" RESTART IDENTITY CASCADE');
+      await queryInterface.sequelize.query('TRUNCATE TABLE "Images" RESTART IDENTITY CASCADE');
+      await queryInterface.sequelize.query('TRUNCATE TABLE "Likes" RESTART IDENTITY CASCADE');
+      await queryInterface.sequelize.query('TRUNCATE TABLE "Chats" RESTART IDENTITY CASCADE');
+      await queryInterface.sequelize.query('TRUNCATE TABLE "Messages" RESTART IDENTITY CASCADE');
+
       const dataPath = path.join(__dirname, '..', 'data');
       const users = JSON.parse(fs.readFileSync(path.join(dataPath, 'users.json'), 'utf8'));
       const categories = JSON.parse(fs.readFileSync(path.join(dataPath, 'categories.json'), 'utf8'));

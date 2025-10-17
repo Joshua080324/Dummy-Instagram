@@ -1,49 +1,45 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleLike, setLikeCount, setLikeState } from '../store/likesSlice';
-import { Card, Carousel, Button } from 'react-bootstrap';
-import { Heart, HeartFill, ChatDots, Send, Bookmark } from 'react-bootstrap-icons';
-import http from '../helpers/http';
+import { toggleLikeAsync, setLikeCount, setLikeState } from '../store/likesSlice';
+import { Card, Carousel, Button, Dropdown, Spinner } from 'react-bootstrap';
+import { Heart, HeartFill, ChatDots, Send, Bookmark, ThreeDotsVertical, PencilSquare, Trash } from 'react-bootstrap-icons';
 import Swal from 'sweetalert2';
 
-const PostCard = ({ post, onLikeToggle }) => {
+const PostCard = ({ post, onLikeToggle, onEdit, onDelete, showActions = false }) => {
   const dispatch = useDispatch();
   const isLiked = useSelector(state => state.likes.likedById[post.id]) || false;
   const likesCount = useSelector(state => state.likes.counts[post.id]) ?? (post.Likes?.length || 0);
+  const isLikeLoading = useSelector(state => state.likes.loading[post.id]) || false;
   const [showFullCaption, setShowFullCaption] = useState(false);
 
+  // Get current user ID from Redux
+  const currentUser = useSelector(state => state.auth.user);
+  const currentUserId = currentUser?.id;
+  const isOwnPost = post.UserId === currentUserId;
+
   // Initialize redux like state on mount
-  useState(() => {
+  useEffect(() => {
     if (post && post.id) {
       dispatch(setLikeCount({ postId: post.id, count: post.Likes?.length || 0 }));
-      // naive liked detection: current user liked if Likes contains current user id
-      const token = localStorage.getItem('access_token');
-      if (token && post.Likes) {
-        // decode token minimal (not verifying) to get id
-        try {
-          const payload = JSON.parse(atob(token.split('.')[1]));
-          const userId = payload.id;
-          const liked = post.Likes.some(like => like.UserId === userId);
-          dispatch(setLikeState({ postId: post.id, liked }));
-        } catch (e) {
-          // ignore
-        }
+      
+      if (currentUserId && post.Likes) {
+        const liked = post.Likes.some(like => like.UserId === currentUserId);
+        dispatch(setLikeState({ postId: post.id, liked }));
       }
     }
-  }, [post]);
+  }, [post, currentUserId, dispatch]);
 
   const handleLike = async () => {
     try {
-      const { data } = await http.post(`/posts/${post.id}/like`);
-
-      // Optimistically toggle redux state
-      dispatch(toggleLike(post.id));
+      await dispatch(toggleLikeAsync(post.id)).unwrap();
       if (onLikeToggle) onLikeToggle(post.id);
     } catch (error) {
       Swal.fire({
         icon: 'error',
         title: 'Failed to like post',
-        text: error.response?.data?.message || 'Something went wrong',
+        text: error || 'Something went wrong',
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdrop: 'rgba(102, 126, 234, 0.4)',
       });
     }
   };
@@ -91,12 +87,39 @@ const PostCard = ({ post, onLikeToggle }) => {
           <small className="text-muted">{formatDate(post.createdAt)}</small>
         </div>
         {post.Category && (
-          <span className="badge bg-gradient-primary px-3 py-2" style={{
+          <span className="badge bg-gradient-primary px-3 py-2 me-2" style={{
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             borderRadius: '20px'
           }}>
             {post.Category.name}
           </span>
+        )}
+        {showActions && isOwnPost && (
+          <Dropdown align="end">
+            <Dropdown.Toggle 
+              variant="link" 
+              className="p-0 text-dark"
+              style={{ 
+                fontSize: '20px',
+                textDecoration: 'none',
+                border: 'none',
+                boxShadow: 'none'
+              }}
+            >
+              <ThreeDotsVertical />
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={() => onEdit(post)}>
+                <PencilSquare className="me-2" />
+                Edit Post
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => onDelete(post.id)} className="text-danger">
+                <Trash className="me-2" />
+                Delete Post
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         )}
       </Card.Header>
 
@@ -137,18 +160,28 @@ const PostCard = ({ post, onLikeToggle }) => {
       {/* Post Actions */}
       <Card.Body className="px-3 pt-3 pb-2">
         <div className="d-flex align-items-center mb-2">
-          <Button
-            variant="link"
-            className="p-0 me-3 text-decoration-none like-button"
-            onClick={handleLike}
-            style={{ fontSize: '24px' }}
-          >
-            {isLiked ? (
-              <HeartFill className="text-danger heart-icon" />
-            ) : (
-              <Heart className="text-dark heart-icon" />
-            )}
-          </Button>
+          {!isOwnPost && (
+            <Button
+              variant="link"
+              className="p-0 me-3 text-decoration-none like-button"
+              onClick={handleLike}
+              disabled={isLikeLoading}
+              style={{ fontSize: '24px', position: 'relative' }}
+            >
+              {isLikeLoading ? (
+                <Spinner animation="border" size="sm" />
+              ) : isLiked ? (
+                <HeartFill className="text-danger heart-icon" />
+              ) : (
+                <Heart className="text-dark heart-icon" />
+              )}
+            </Button>
+          )}
+          {isOwnPost && (
+            <div className="me-3" style={{ fontSize: '24px', opacity: 0.3 }}>
+              <Heart className="text-muted" />
+            </div>
+          )}
           <Button
             variant="link"
             className="p-0 me-3 text-decoration-none text-dark"

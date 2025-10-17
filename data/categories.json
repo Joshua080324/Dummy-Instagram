@@ -1,12 +1,9 @@
 [
   {
-    "name": "Nature"
+    "name": "Travel"
   },
   {
     "name": "Food"
-  },
-  {
-    "name": "Travel"
   },
   {
     "name": "Fashion"
@@ -15,12 +12,6 @@
     "name": "Technology"
   },
   {
-    "name": "Art"
-  },
-  {
-    "name": "Fitness"
-  },
-  {
-    "name": "Pets"
+    "name": "Lifestyle"
   }
 ]
