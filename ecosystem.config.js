@@ -6,7 +6,7 @@ module.exports = {
       env: {
         // --- General Configuration ---
         NODE_ENV: 'production',
-        PORT: 80,
+        PORT: 3000,
 
         // --- JWT & Database ---
         JWT_SECRET: 'supersecret',

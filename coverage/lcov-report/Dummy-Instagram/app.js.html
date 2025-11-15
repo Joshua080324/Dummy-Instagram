@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">77.14% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>22/22</span>
+                <span class='fraction'>27/35</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">40% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>4/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">33.33% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>2/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">77.14% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>22/22</span>
+                <span class='fraction'>27/35</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -122,7 +122,12 @@
 <a name='L57'></a><a href='#L57'>57</a>
 <a name='L58'></a><a href='#L58'>58</a>
 <a name='L59'></a><a href='#L59'>59</a>
-<a name='L60'></a><a href='#L60'>60</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">11x</span>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-yes">11x</span>
@@ -156,28 +161,33 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -215,30 +225,35 @@ app.use(handleError);
 &nbsp;
 // +++ Logika koneksi Socket.IO +++
 io.on('connection', (socket) =&gt; {
-  // console.log('✅ User connected:', socket.id); //comment untuk npx jest
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (process.env.NODE_ENV !== 'test') {
+<span class="cstat-no" title="statement not covered" >    console.log('✅ User connected:', socket.id);</span>
+  }
 &nbsp;
   socket.on('join_chat', (chatId) =&gt; {
     socket.join(`chat_${chatId}`);
   });
 &nbsp;
-  // socket.on('send_message', (messageData) =&gt; { //comment untuk npx jest
-  //   io.to(`chat_${messageData.chatId}`).emit('new_message', messageData); 
-  // });
+  socket.on('send_message', <span class="fstat-no" title="function not covered" >(m</span>essageData) =&gt; {
+<span class="cstat-no" title="statement not covered" >    io.to(`chat_${messageData.chatId}`).emit('new_message', messageData); </span>
+  });
 &nbsp;
-  // socket.on('user_typing', (typingData) =&gt; { //comment untuk npx jest
-  //   io.to(`chat_${typingData.chatId}`).emit('typing_status', typingData); 
-  // });
+  socket.on('user_typing', <span class="fstat-no" title="function not covered" >(t</span>ypingData) =&gt; {
+<span class="cstat-no" title="statement not covered" >    io.to(`chat_${typingData.chatId}`).emit('typing_status', typingData); </span>
+  });
 &nbsp;
-  // socket.on('disconnect', () =&gt; { //comment untuk npx jest
-  //   // console.log('❌ User disconnected:', socket.id); 
-  // });
+  socket.on('disconnect', <span class="fstat-no" title="function not covered" >()</span> =&gt; {
+<span class="cstat-no" title="statement not covered" >    if (process.env.NODE_ENV !== 'test') {</span>
+<span class="cstat-no" title="statement not covered" >      console.log('❌ User disconnected:', socket.id);</span>
+    }
+  });
 });
 &nbsp;
-// if (process.env.NODE_ENV !== 'test') { //comment untuk npx jest
-//   server.listen(port, () =&gt; {
-//     console.log(`App listening on port http://localhost:${port}`);
-//   });
-// }
+<span class="missing-if-branch" title="if path not taken" >I</span>if (process.env.NODE_ENV !== 'test') {
+<span class="cstat-no" title="statement not covered" >  server.listen(port, <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    console.log(`🚀 Server running on port ${port}`);</span>
+<span class="cstat-no" title="statement not covered" >    console.log(`📡 Environment: ${process.env.NODE_ENV || 'development'}`);</span>
+  });
+}
 &nbsp;
 module.exports = app;</pre></td></tr></table></pre>
 
@@ -247,7 +262,7 @@ module.exports = app;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-17T06:57:43.767Z
+                at 2025-11-15T14:29:56.164Z
             </div>
         <script src="../prettify.js"></script>
         <script>
