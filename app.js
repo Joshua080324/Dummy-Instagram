@@ -32,29 +32,34 @@ app.use(handleError);
 
 // +++ Logika koneksi Socket.IO +++
 io.on('connection', (socket) => {
-  // console.log('✅ User connected:', socket.id); //comment untuk npx jest
+  if (process.env.NODE_ENV !== 'test') {
+    console.log('✅ User connected:', socket.id);
+  }
 
   socket.on('join_chat', (chatId) => {
     socket.join(`chat_${chatId}`);
   });
 
-  // socket.on('send_message', (messageData) => { //comment untuk npx jest
-  //   io.to(`chat_${messageData.chatId}`).emit('new_message', messageData); 
-  // });
+  socket.on('send_message', (messageData) => {
+    io.to(`chat_${messageData.chatId}`).emit('new_message', messageData); 
+  });
 
-  // socket.on('user_typing', (typingData) => { //comment untuk npx jest
-  //   io.to(`chat_${typingData.chatId}`).emit('typing_status', typingData); 
-  // });
+  socket.on('user_typing', (typingData) => {
+    io.to(`chat_${typingData.chatId}`).emit('typing_status', typingData); 
+  });
 
-  // socket.on('disconnect', () => { //comment untuk npx jest
-  //   // console.log('❌ User disconnected:', socket.id); 
-  // });
+  socket.on('disconnect', () => {
+    if (process.env.NODE_ENV !== 'test') {
+      console.log('❌ User disconnected:', socket.id);
+    }
+  });
 });
 
-// if (process.env.NODE_ENV !== 'test') { //comment untuk npx jest
-//   server.listen(port, () => {
-//     console.log(`App listening on port http://localhost:${port}`);
-//   });
-// }
+if (process.env.NODE_ENV !== 'test') {
+  server.listen(port, () => {
+    console.log(`🚀 Server running on port ${port}`);
+    console.log(`📡 Environment: ${process.env.NODE_ENV || 'development'}`);
+  });
+}
 
 module.exports = app;
