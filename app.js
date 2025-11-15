@@ -18,7 +18,16 @@ const io = new Server(server, {
 app.set('socketio', io); 
 
 // Middleware
-app.use(cors()); 
+app.use(cors({
+  origin: [
+    'https://dummy-instagram-bf902.web.app',
+    'https://dummy-instagram-bf902.firebaseapp.com',
+    'https://gc01.dariusjoshua.xyz',
+    'http://localhost:5173',
+    'http://localhost:5000'
+  ],
+  credentials: true
+})); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
