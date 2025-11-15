@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const http = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "https://dariusjoshua.shop",
+  baseURL: import.meta.env.VITE_API_URL || "http://dariusjoshua.me",
   headers: {
     'Content-Type': 'application/json',
   },
